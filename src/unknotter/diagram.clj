@@ -21,3 +21,9 @@
             {})))
 
 (def diagram-data (load-diagram-data))
+
+(defn load-knot-diagram [knot-name]
+  "Loads the diagram for a know. The knot-name is expected to be a keyword, such as :3_1 or :5_2."
+  (let [knot-data (diagram-data knot-name)]
+    ; knot-data looks like [[2;5;3;6];[4;1;5;2];[6;3;1;4]] etc. etc.
+    (TODO "turn knot-data into a diagram")))

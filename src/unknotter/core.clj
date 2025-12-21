@@ -4,4 +4,4 @@
 
 (defn -main
   [& args]
-  (println (diagram/diagram-data :3_1)))
+  (println (diagram/load-knot-diagram :3_1)))
