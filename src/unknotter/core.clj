@@ -1,7 +1,7 @@
 (ns unknotter.core
-  (:gen-class))
+  (:gen-class)
+  (:require [unknotter.diagram :as diagram]))
 
 (defn -main
-  "I don't do a whole lot ... yet."
   [& args]
-  (println "Hello, World!"))
+  (println (diagram/diagram-data :3_1)))
