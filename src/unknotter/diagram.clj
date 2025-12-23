@@ -1,15 +1,13 @@
 (ns unknotter.diagram
-  "We use Planar Diagrams (PD) to represent knots. See: https://katlas.org/wiki/Planar_Diagrams")
+  "We use Planar Diagrams (PD) to represent knots. See: https://katlas.org/wiki/Planar_Diagrams"
+  (:require [clojure.java.io]))
 
 (defn- load-resource-lines
   "Loads a resource as a vector of lines."
   [resource-name]
   (with-open [reader (clojure.java.io/reader (clojure.java.io/resource resource-name))]
-    (reduce
-      (fn [lines line]
-        (conj lines line))
-      []
-      (line-seq reader))))
+    ; Use mapv instead of map because mapv is eager. Instead, map is lazy, and it would execute after the reader is closed.
+    (mapv identity (line-seq reader))))
 
 (defn- load-diagram-data
   "Loads knotinfo.csv into a hash map.
