@@ -29,4 +29,7 @@
   [knot-name]
   (let [knot-data (diagram-data knot-name)]
     ; knot-data looks like [[2;5;3;6];[4;1;5;2];[6;3;1;4]] etc. etc.
-    (read-string (.replace (.replace knot-data "];[", "] [") ";" " "))))
+    (-> knot-data
+        (.replace "];[", "] [")
+        (.replace ";" " ")
+        (read-string))))
