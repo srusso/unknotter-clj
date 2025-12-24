@@ -16,13 +16,13 @@
 
 (defn- prev-edge [knot edge] (shift-modulo knot edge -1))
 
-(defn get-crossings-with-edge
+(defn find-crossings-with-edge
   "Get a list of all crossings that are adjacent to a given edge."
   [knot edge]
   (keep-indexed (fn [i crossing] (if (some #(= edge %) crossing) [i crossing] nil))
     knot))
 
-(defn get-friend-index
+(defn find-friend-crossing-index
   "Given the index of an edge, get the index of its friend.
 
   Say we have a knot with two crossings: [[_  _  _  2] [_  _  2  _]].
@@ -32,7 +32,7 @@
   [knot crossing-index edge-index]
   (let [crossing (get knot crossing-index)
         edge (get crossing edge-index)
-        [[idx1 crossing1] [idx2 crossing2] & more] (get-crossings-with-edge knot edge)]
+        [[idx1 crossing1] [idx2 crossing2] & more] (find-crossings-with-edge knot edge)]
 
     (when (not-empty more)
       (throw (IllegalArgumentException. (str "Invalid knot. More than two crossings with edge " edge " found. Knot: " knot))))
@@ -47,10 +47,7 @@
 
       ; We found two crossings with the desired edge: return the other one.
       (= crossing1 crossing) [idx2 (index-of crossing2 edge)]
-      :else [idx1 (index-of crossing1 edge)]
-      )
-    )
-  )
+      :else [idx1 (index-of crossing1 edge)])))
 
 (defn- index-is-facing
   "Returns true if the given edge is facing its crossing."
