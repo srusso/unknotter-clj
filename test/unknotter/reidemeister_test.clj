@@ -13,6 +13,12 @@
           (find-crossings-with-edge [[2 5 3 6] [4 1 5 2] [6 3 1 4]] 2)))))
 
 (deftest test-get-friend-index
+  (testing "Find friend index in illegal knot"
+    (is (thrown? IllegalArgumentException
+                 ; too many 5s!
+                 (find-friend-crossing-index [[2 5 3 6] [4 1 5 2] [5 3 1 4]] 0 1)))))
+
+(deftest test-get-friend-index
   (testing "Find friend index"
     ; Explanation: at coordinates (0, 1) we find 5, which is also found at coordinates (1 2).
     (is (=
