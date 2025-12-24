@@ -21,13 +21,16 @@
               (assoc knot-diagram-map (keyword knot-name) knot-data))
             {})))
 
+; schema for "vector of integer vectors, the inner vectors having a size of 4"
 (def knot-diagram-schema [:vector [:repeat {:min 4, :max 4} :int]])
+
 (def parse-knot-diagram (m/parser knot-diagram-schema))
 
+; stores contents of knotinfo.csv
 (def diagram-data (load-diagram-data))
 
 (defn load-knot-diagram
-  "Loads the diagram for a know. The knot-name is expected to be a keyword, such as :3_1 or :5_2."
+  "Loads the diagram for a knot. The knot-name is expected to be a keyword, such as :3_1 or :5_2."
   [knot-name]
   (let [knot-data (diagram-data knot-name)]
     ; knot-data looks like [[2;5;3;6];[4;1;5;2];[6;3;1;4]] etc. etc.
