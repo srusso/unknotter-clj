@@ -3,10 +3,36 @@
 (def infinity-unknot-1 [[1 2 2 1]])
 (def infinity-unknot-2 [[1 1 2 2]])
 
+(defn- next [knot edge])
+
+(defn- prev [knot edge])
+
+(defn- get_friend_index [knot crossing_index, edge_index])
+
+(defn- get-forth-index [knot edge]
+  (let [found-crossings
+        (keep-indexed (fn [idx crossing]
+                        (cond
+                          (= edge (get crossing 0))
+                          [idx 0]
+                          (and (= edge (get crossing 1)) (= (next knot edge) (get crossing 3)))
+                          [idx 1]
+                          (and (= edge (get crossing 3)) (= (next knot edge) (get crossing 1)))
+                          [idx 3]
+                          :else nil
+                          ))
+                      knot)
+        first-crossing (first found-crossings)]
+    (when (nil? first-crossing)
+      (throw (IllegalArgumentException. (str "Invalid knot (could not find forth index for edge " edge "): " knot))))
+    first-crossing))
+
 (defn- get-adjacent-faces
   "Given a knot and an edge, returns the two adjacent faces: counterclockwise first, clockwise second."
   [knot edge]
-  [1 2])
+  [
+
+   ])
 
 (defn- prepare-poke
   "Readjust the edge values of the knot with the expectation of a poke between the two edges."
