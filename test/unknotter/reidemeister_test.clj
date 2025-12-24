@@ -12,7 +12,7 @@
           [[0 [2 5 3 6]] [1 [4 1 5 2]]]
           (find-crossings-with-edge [[2 5 3 6] [4 1 5 2] [6 3 1 4]] 2)))))
 
-(deftest test-get-friend-index
+(deftest test-get-friend-index-illegal
   (testing "Find friend index in illegal knot"
     (is (thrown? IllegalArgumentException
                  ; too many 5s!

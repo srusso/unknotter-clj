@@ -1,5 +1,5 @@
 (ns unknotter.reidemeister
-  (:require [unknotter.vectors :refer [index-of]]))
+  (:require [unknotter.vectors :refer [index-of indexes-of]]))
 
 (def infinity-unknot-1 [[1 2 2 1]])
 (def infinity-unknot-2 [[1 1 2 2]])
@@ -38,12 +38,10 @@
       (throw (IllegalArgumentException. (str "Invalid knot. More than two crossings with edge " edge " found. Knot: " knot))))
 
     (cond
-      ; We found only one crossing with the desired edge: it must be the one at 'crossing-index', a.k.a. crossing == crossing1.
-      (nil? crossing2) (let [pos (mapv identity (keep-indexed (fn [i row] (if (= row edge) i nil)) crossing))]
-                         ; Its friend is itself (i.e. crossing-index), since it's the only crossing with the desired edge.
-                         ; In this case, this edge must be in two positions within this crossing, i.e. [_ 2 _ 2 ]
-                         ; We want to return the "other one" (i.e. not the one at edge-index).
-                         [crossing-index (if (= (first pos) edge-index) (get pos 1) (first pos))])
+      ; We found only one crossing with the desired edge: it's its own friend then.
+      (nil? crossing2) (let [[position1 position2] (indexes-of crossing edge)]
+                         ; The edge will be in two places in this crossing. Return the other one.
+                         [crossing-index (if (= position1 edge-index) position2 position1)])
 
       ; We found two crossings with the desired edge: return the other one.
       (= crossing1 crossing) [idx2 (index-of crossing2 edge)]
