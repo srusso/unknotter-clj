@@ -66,22 +66,13 @@
 (defn get-forth-index
   "Get the index of the given edge in the crossing it faces toward."
   [knot edge]
-  (let [found-crossings
-        (keep-indexed (fn [idx crossing]
-                        (cond
-                          (= edge (get crossing 0))
-                          [idx 0]
-                          (and (= edge (get crossing 1)) (= (next-edge knot edge) (get crossing 3)))
-                          [idx 1]
-                          (and (= edge (get crossing 3)) (= (next-edge knot edge) (get crossing 1)))
-                          [idx 3]
-                          :else nil
-                          ))
-                      knot)
-        first-crossing (first found-crossings)]
-    (when (nil? first-crossing)
-      (throw (IllegalArgumentException. (str "Invalid knot (could not find forth index for edge " edge "): " knot))))
-    first-crossing))
+  (let [[[idx1 crossing1] [idx2 crossing2] & more] (find-crossings-with-edge knot edge)
+        edge-idx-in-crossing-1 (index-of crossing1 edge)]
+    (when (not-empty more)
+      (throw (IllegalArgumentException. (str "Invalid knot. More than two crossings with edge " edge " found. Knot: " knot))))
+    (if (index-is-facing knot idx1 edge-idx-in-crossing-1)
+      [idx1 edge-idx-in-crossing-1]
+      [idx2 (index-of crossing2 edge)])))
 
 (defn get-adjacent-faces
   "Given a knot and an edge, returns the two adjacent faces: counterclockwise first, clockwise second."
