@@ -1,24 +1,30 @@
 (ns unknotter.reidemeister-test
   (:require [clojure.test :refer [deftest is testing]]
             [unknotter.diagram :refer [load-knot-diagram]]
-            [unknotter.reidemeister :refer [poke get-friend-index]]))
+            [unknotter.reidemeister :refer [poke get-friend-index get-crossings-with-edge]]))
 
 (def trefoil (load-knot-diagram :3_1))
 (def expected-poked-trefoil [[2 7 3 8] [3 9 4 8] [4 9 5 10] [6 1 7 2] [10 5 1 6]])
+
+(deftest test-get-crossings-with-edge
+  (testing "Get crossings with edge"
+    (is (=
+          [[0 [2 5 3 6]] [1 [4 1 5 2]]]
+          (get-crossings-with-edge [[2 5 3 6] [4 1 5 2] [6 3 1 4]] 2)))))
 
 (deftest test-get-friend-index
   (testing "Find friend index"
     ; Explanation: at coordinates (0, 1) we find 5, which is also found at coordinates (1 2).
     (is (=
-          (get-friend-index [[2 5 3 6] [4 1 5 2] [6 3 1 4]] 0 1)
-          [1 2]))
+          [1 2]
+          (get-friend-index [[2 5 3 6] [4 1 5 2] [6 3 1 4]] 0 1)))
     ; Same test as above, but flipping the friend crossings.
     (is (=
-          (get-friend-index [[2 5 3 6] [4 1 5 2] [6 3 1 4]] 1 2)
-          [0 1]))
+          [0 1]
+          (get-friend-index [[2 5 3 6] [4 1 5 2] [6 3 1 4]] 1 2)))
     ; Edge case: knot with a single crossing.
-    (is (= (get-friend-index [[1 2 2 1]] 0 0) [0 3]))
-    (is (= (get-friend-index [[1 2 2 1]] 0 3) [0 0]))))
+    (is (= [0 3] (get-friend-index [[1 2 2 1]] 0 0)))
+    (is (= [0 0] (get-friend-index [[1 2 2 1]] 0 3)))))
 
 (deftest test-poke
   (testing "Poke trefoil into star, under-edge: 1, over-edge: 4"

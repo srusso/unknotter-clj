@@ -1,4 +1,5 @@
-(ns unknotter.reidemeister)
+(ns unknotter.reidemeister
+  (:require [unknotter.vectors :refer [index-of]]))
 
 (def infinity-unknot-1 [[1 2 2 1]])
 (def infinity-unknot-2 [[1 1 2 2]])
@@ -15,30 +16,38 @@
 
 (defn- prev-edge [knot edge] (shift-modulo knot edge -1))
 
-(defn- get-crossings-with-edge
+(defn get-crossings-with-edge
   "Get a list of all crossings that are adjacent to a given edge."
   [knot edge]
-  (filter
-    (fn [crossing] (contains? crossing edge))
+  (keep-indexed (fn [i crossing] (if (some #(= edge %) crossing) [i crossing] nil))
     knot))
 
-(defn- get_friend_index
+(defn get-friend-index
   "Given the index of an edge, get the index of its friend.
 
   Say we have a knot with two crossings: [[_  _  _  2] [_  _  2  _]].
   The first 2 is in the first crossing in the fourth position, so it has the index (1, 4).
   The second 2 is in the second crossing in the third position, so it has the index (2, 3).
   Thus, diagram._get_friend_index(1, 4) = (2, 3) and diagram._get_friend_index(2, 3) = (1, 4)."
-  [knot crossing-index edge-index-within-crossing]
-  (let [
-        crossing (get knot crossing-index)
-        edge (get crossing edge-index-within-crossing)
-        crossings-with-edge (get-crossings-with-edge knot edge)
-        ]
+  [knot crossing-index edge-index]
+  (let [crossing (get knot crossing-index)
+        edge (get crossing edge-index)
+        [[idx1 crossing1] [idx2 crossing2] & more] (get-crossings-with-edge knot edge)]
+
+    (when (not-empty more)
+      (throw (IllegalArgumentException. (str "Invalid knot. More than two crossings with edge " edge " found. Knot: " knot))))
+
     (cond
-      (= 1 (count crossings-with-edge))
-      (= (first crossings-with-edge) (get knot crossing-index))
-      :else
+      ; We found only one crossing with the desired edge: it must be the one at 'crossing-index', a.k.a. crossing == crossing1.
+      (nil? crossing2) (let [pos (mapv identity (keep-indexed (fn [i row] (if (= row edge) i nil)) crossing))]
+                         ; Its friend is itself (i.e. crossing-index), since it's the only crossing with the desired edge.
+                         ; In this case, this edge must be in two positions within this crossing, i.e. [_ 2 _ 2 ]
+                         ; We want to return the "other one" (i.e. not the one at edge-index).
+                         [crossing-index (if (= (first pos) edge-index) (get pos 1) (first pos))])
+
+      ; We found two crossings with the desired edge: return the other one.
+      (= crossing1 crossing) [idx2 (index-of crossing2 edge)]
+      :else [idx1 (index-of crossing1 edge)]
       )
     )
   )
