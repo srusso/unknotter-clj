@@ -18,7 +18,9 @@
   (testing "Poke trefoil into star, under-edge: 3, over-edge: 6"
     (is (= (poke trefoil 3 6) expected-poked-trefoil)))
   (testing "Poke trefoil into star, under-edge: 6, over-edge: 3"
-    (is (= (poke trefoil 6 3) expected-poked-trefoil)))
+    (is (= (poke trefoil 6 3) expected-poked-trefoil))))
+
+(deftest test-poke-infinity-unknots
   (testing "Poke infinity unknot"
     (is (=
           (poke [[1 2 2 1]] 1 2)
@@ -27,3 +29,7 @@
     (is (=
           (poke [[1 1 2 2]] 2 1)
           [[4 2 5 1] [5 2 6 3] [6 4 1 3]]))))
+
+(deftest test-illegal-poke
+  (testing
+    (is (thrown? IllegalArgumentException (poke trefoil 3 3)))))
