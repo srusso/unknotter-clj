@@ -12,7 +12,10 @@
     1)
   )
 
-(defn- next-edge [knot edge] (shift-modulo knot edge 1))
+(defn- next-edge
+  "Gets the edge after the given edge, following the knot's orientation.
+  A new edge is born after each under-crossing and over-crossing."
+  [knot edge] (shift-modulo knot edge 1))
 
 (defn- prev-edge [knot edge] (shift-modulo knot edge -1))
 
@@ -52,10 +55,19 @@
   [knot crossing-index edge-index]
   (let [crossing (get knot crossing-index)]
     (cond
+      ; In PD notation, the edge at index 0 is the incoming undercrossing.
       (= 0 edge-index) true
-      (= 1 edge-index) (= (get crossing 3) (next (get crossing 1)))
-      (= 3 edge-index) (= (get crossing 1) (next (get crossing 3)))
-      :else (throw (IllegalArgumentException. (str "Invalid knot (could not determine facing index): " knot))))))
+
+      ; If the first edge "flows" into the third one (either by under or over-crossing), then it's indeed facing the crossing.
+      (= 1 edge-index) (= (next-edge knot (get crossing 1)) (get crossing 3))
+
+      ; In PD notation, the edge at index 2 is the outgoing undercrossing.
+      (= 2 edge-index) false
+
+      ; If the third edge "flows" into the first one (either by under or over-crossing), then it's indeed facing the crossing.
+      (= 3 edge-index) (= (next-edge knot (get crossing 3)) (get crossing 1))
+
+      :else (throw (IllegalArgumentException. (str "Invalid edge-index parameter: " edge-index ", knot: " knot))))))
 
 (defn- get-forth-index
   "Get the index of the given edge in the crossing it faces toward."
