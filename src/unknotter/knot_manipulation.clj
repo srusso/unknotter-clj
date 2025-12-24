@@ -20,7 +20,7 @@
   "Get a list of all crossings that are adjacent to a given edge."
   [knot edge]
   (keep-indexed (fn [i crossing] (if (some #(= edge %) crossing) [i crossing] nil))
-    knot))
+                knot))
 
 (defn find-friend-crossing-index
   "Given the index of an edge, get the index of its friend.
@@ -48,22 +48,19 @@
       :else [idx1 (index-of crossing1 edge)])))
 
 (defn index-is-facing
-  "Returns true if the given edge is facing its crossing."
+  "Returns true if the given edge is facing its crossing.
+   In PD notation:
+    * the edge at index 0 is the incoming undercrossing (i.e. true return value)
+    * the edge at index 2 is the outgoing undercrossing (i.e. false return value)
+    * for edges 1 and 3, one of them will be facing the crossing, hence the implementation
+      for one of those can simple be the negation of the other"
   [knot crossing-index edge-index]
   (let [crossing (get knot crossing-index)]
     (cond
-      ; In PD notation, the edge at index 0 is the incoming undercrossing.
       (= 0 edge-index) true
-
-      ; If the first edge "flows" into the third one (either by under or over-crossing), then it's indeed facing the crossing.
       (= 1 edge-index) (= (next-edge knot (get crossing 1)) (get crossing 3))
-
-      ; In PD notation, the edge at index 2 is the outgoing undercrossing.
       (= 2 edge-index) false
-
-      ; If the third edge "flows" into the first one (either by under or over-crossing), then it's indeed facing the crossing.
-      (= 3 edge-index) (= (next-edge knot (get crossing 3)) (get crossing 1))
-
+      (= 3 edge-index) (not (index-is-facing knot crossing-index 1))
       :else (throw (IllegalArgumentException. (str "Invalid edge-index parameter: " edge-index ", knot: " knot))))))
 
 (defn get-forth-index
