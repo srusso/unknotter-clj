@@ -1,6 +1,7 @@
 (ns unknotter.knot-manipulation-test
   (:require [clojure.test :refer [deftest is testing]]
-            [unknotter.knot-manipulation :refer [find-crossings-with-edge find-friend-crossing-index index-is-facing]]))
+            [unknotter.diagram :refer [load-knot-diagram]]
+            [unknotter.knot-manipulation :refer [find-crossings-with-edge find-friend-crossing-index index-is-facing get-forth-index]]))
 
 (deftest test-find-crossings-with-edge
   (testing "Get crossings with edge"
@@ -46,3 +47,29 @@
     (is (= true (index-is-facing trefoil 2 1)))
     (is (= false (index-is-facing trefoil 2 2)))
     (is (= false (index-is-facing trefoil 2 3)))))
+
+(def trefoil (load-knot-diagram :3_1))
+(def knot72 (load-knot-diagram :7_2))
+
+(deftest test-get-forth-index
+  (testing
+    (is (= (get-forth-index trefoil 1) [1, 1]))
+    (is (= (get-forth-index trefoil 2) [0, 0]))
+    (is (= (get-forth-index trefoil 3) [2, 1]))
+    (is (= (get-forth-index trefoil 4) [1, 0]))
+    (is (= (get-forth-index trefoil 5) [0, 1]))
+    (is (= (get-forth-index trefoil 6) [2, 0]))
+
+    (is (= (get-forth-index knot72 1) [3, 3]))
+    (is (= (get-forth-index knot72 2) [0, 0]))
+    (is (= (get-forth-index knot72 3) [6, 3]))
+    (is (= (get-forth-index knot72 4) [1, 0]))
+    (is (= (get-forth-index knot72 5) [5, 3]))
+    (is (= (get-forth-index knot72 6) [2, 0]))
+    (is (= (get-forth-index knot72 7) [4, 3]))
+    (is (= (get-forth-index knot72 8) [3, 0]))
+    (is (= (get-forth-index knot72 9) [0, 3]))
+    (is (= (get-forth-index knot72 10) [4, 0]))
+    (is (= (get-forth-index knot72 11) [2, 3]))
+    (is (= (get-forth-index knot72 12) [5, 0]))
+    (is (= (get-forth-index knot72 13) [1, 3]))))
