@@ -1,6 +1,7 @@
 (ns unknotter.diagram
   "We use Planar Diagrams (PD) to represent knots. See: https://katlas.org/wiki/Planar_Diagrams"
-  (:require [clojure.java.io]))
+  (:require [clojure.java.io]
+            [malli.core :as m]))
 
 (defn- load-resource-lines
   "Loads a resource as a vector of lines."
@@ -20,6 +21,9 @@
               (assoc knot-diagram-map (keyword knot-name) knot-data))
             {})))
 
+(def knot-diagram-schema [:vector [:repeat {:min 4, :max 4} :int]])
+(def parse-knot-diagram (m/parser knot-diagram-schema))
+
 (def diagram-data (load-diagram-data))
 
 (defn load-knot-diagram
@@ -30,4 +34,5 @@
     (-> knot-data
         (.replace "];[", "] [")
         (.replace ";" " ")
-        (read-string))))
+        (read-string)
+        (parse-knot-diagram))))
