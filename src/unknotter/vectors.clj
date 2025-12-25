@@ -4,7 +4,7 @@
   (= (set collection-1) (set collection-2)))
 
 (defn has [collection item]
-  (some #(= item %) collection))
+  (not (nil? (some #(= item %) collection))))
 
 (defn indexes-of
   "Returns the indexes of all the occurrences of the element in the collection.

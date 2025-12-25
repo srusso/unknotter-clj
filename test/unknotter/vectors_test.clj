@@ -1,0 +1,27 @@
+(ns unknotter.vectors-test
+  (:require [clojure.test :refer [deftest is testing]])
+  (:require [unknotter.vectors :refer [index-of count-of has equal-as-set]]))
+
+(deftest index-of-test
+  (testing
+    (is (= 2 (index-of [1 2 3] 3)))))
+
+(deftest count-of-test
+  (testing
+    (is (= 0 (count-of [1 2 3] 4)))
+    (is (= 1 (count-of [1 2 3] 3)))
+    (is (= 2 (count-of [1 2 3 3] 3)))))
+
+(deftest has-test
+  (testing
+    (is (= true (has [1 2 3] 1)))
+    (is (= false (has [1 2 3] 4)))))
+
+(deftest equal-as-set-test
+  (testing
+    (is (= true (equal-as-set [1 2 3] [1 2 3])))
+    (is (= true (equal-as-set [1 2 3] [3 2 1])))
+    (is (= true (equal-as-set [1 2 3] [3 1 2])))
+    (is (= false (equal-as-set [1 2 3] [1 2 3 4])))
+    (is (= false (equal-as-set [1 2 3] [1 2 4])))
+    (is (= false (equal-as-set [1 2 3] [1 2])))))
