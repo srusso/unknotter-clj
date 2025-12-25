@@ -1,4 +1,4 @@
-(ns unknotter.diagram-test
+(ns unknotter.resource-loader-test
   (:require [clojure.test :refer [deftest is testing]]
             [unknotter.resource-loader :refer [load-knot-diagram parse-knot-diagram]]))
 
