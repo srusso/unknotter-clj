@@ -22,6 +22,9 @@
   (keep-indexed (fn [i crossing] (if (some #(= edge %) crossing) [i crossing] nil))
                 knot))
 
+(defn- edge-value [knot crossing-index edge-index]
+  (get (get knot crossing-index) edge-index))
+
 (defn find-friend-crossing-index
   "Given the index of an edge, get the index of its friend.
 
@@ -74,9 +77,29 @@
       [idx1 edge-idx-in-crossing-1]
       [idx2 (index-of crossing2 edge)])))
 
-(defn get-adjacent-faces
-  "Given a knot and an edge, returns the two adjacent faces: counterclockwise first, clockwise second."
-  [knot edge]
-  [
+(defn- get-adjacent-face
+  "Get one adjacent face. The direction is -1 for counterclockwise, 1 for clockwise."
+  [knot edge direction]
+  (let [
+        ; Given a crossing index and an edge index, move the edge index according to the direction.
+        move-edge-within-crossing (fn [[c e]] [c (mod (+ e direction) 4)])
+        ; The next edge in the face, right after the initial edge 'edge'.
+        indexes-of-next-edge (move-edge-within-crossing (get-forth-index knot edge))
+        face-indexes (->> indexes-of-next-edge
+                          (iterate (fn [edge-indexes]
+                                     (->> (apply find-friend-crossing-index knot edge-indexes)
+                                          move-edge-within-crossing))))
+        sign #(if (apply index-is-facing knot %) -1 1)
+        face-edges (->> face-indexes
+                        (map #(* (sign %) (apply edge-value knot %))))]
+    (->> face-edges
+         (take-while #(not= % edge))
+         ; Don't forget to prepend the initial edge itself!
+         (concat [edge])
+         (into []))))
 
-   ])
+(defn get-adjacent-faces
+  "Given a knot and an edge, returns the two adjacent faces: counterclockwise first, clockwise second.
+  ![Adjacent Faces](insert-png-here.png)"
+  [knot edge]
+  [(get-adjacent-face knot edge -1) (get-adjacent-face knot edge 1)])
