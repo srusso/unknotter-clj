@@ -26,12 +26,17 @@
   [knot edge] (walk-along-knot knot edge -1))
 
 (defn find-crossings-with-edge
-  "Get a list of all crossings that are adjacent to a given edge."
+  "Get a list of all crossings that are adjacent to a given edge.
+   It returns either 1 or two crossings. Throws an exception if 0 or more than 2 crossings are found."
   [knot edge]
-  (keep-indexed (fn [i crossing] (if (has crossing edge) [i crossing] nil))
-                knot))
+  (let [result (keep-indexed (fn [i crossing] (if (has crossing edge) [i crossing] nil)) knot)]
+    (when (empty? result)
+      (throw (IllegalArgumentException. (str "Could not find edge " edge " within knot: " knot))))
+    (when (> (count result) 2)
+      (throw (IllegalArgumentException. (str "Invalid knot. More than two crossings with edge " edge " found. Knot: " knot))))
+    result))
 
-(defn- edge-value [knot crossing-index edge-index]
+(defn- get-edge [knot crossing-index edge-index]
   (get (get knot crossing-index) edge-index))
 
 (defn find-friend-crossing-index
@@ -44,11 +49,7 @@
   [knot crossing-index edge-index]
   (let [crossing (get knot crossing-index)
         edge (get crossing edge-index)
-        [[idx1 crossing1] [idx2 crossing2] & more] (find-crossings-with-edge knot edge)]
-
-    (when (not-empty more)
-      (throw (IllegalArgumentException. (str "Invalid knot. More than two crossings with edge " edge " found. Knot: " knot))))
-
+        [[idx1 crossing1] [idx2 crossing2]] (find-crossings-with-edge knot edge)]
     (cond
       ; We found only one crossing with the desired edge: it's its own friend then.
       (nil? crossing2) (let [[position1 position2] (indexes-of crossing edge)]
@@ -78,10 +79,8 @@
 (defn get-forth-index
   "Get the index of the given edge in the crossing it faces toward."
   [knot edge]
-  (let [[[idx1 crossing1] [idx2 crossing2] & more] (find-crossings-with-edge knot edge)
+  (let [[[idx1 crossing1] [idx2 crossing2]] (find-crossings-with-edge knot edge)
         edge-idx-in-crossing-1 (index-of crossing1 edge)]
-    (when (not-empty more)
-      (throw (IllegalArgumentException. (str "Invalid knot. More than two crossings with edge " edge " found. Knot: " knot))))
     (if (index-is-facing knot idx1 edge-idx-in-crossing-1)
       [idx1 edge-idx-in-crossing-1]
       [idx2 (index-of crossing2 edge)])))
@@ -100,7 +99,7 @@
                                           move-edge-within-crossing))))
         sign #(if (apply index-is-facing knot %) -1 1)
         face-edges (->> face-indexes
-                        (map #(* (sign %) (apply edge-value knot %))))]
+                        (map #(* (sign %) (apply get-edge knot %))))]
     (->> face-edges
          (take-while #(not= % edge))
          ; Don't forget to prepend the initial edge itself!
@@ -109,7 +108,7 @@
 
 (defn get-adjacent-faces
   "Given a knot and an edge, returns the two adjacent faces: counterclockwise first, clockwise second.
-  ![Adjacent Faces](insert-png-here.png)"
+  ![Adjacent Faces](TODO-insert-png-here.png)"
   [knot edge]
   [(get-adjacent-face knot edge -1) (get-adjacent-face knot edge 1)])
 
