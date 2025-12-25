@@ -12,6 +12,9 @@
   [collection element]
   (mapv identity (keep-indexed (fn [i el] (if (= element el) i nil)) collection)))
 
+(defn count-of [collection element]
+  (count (indexes-of collection element)))
+
 (defn index-of
   "Returns the index of the first occurrence of the element in the collection.
   If not found, returns nil."

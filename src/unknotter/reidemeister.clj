@@ -1,6 +1,6 @@
 (ns unknotter.reidemeister
   (:require [unknotter.knot-manipulation :refer [get-adjacent-faces prev-edge]]
-            [unknotter.vectors :refer [has]]
+            [unknotter.vectors :refer [has count-of]]
             [unknotter.resource-loader :refer [infinity-unknot-1 infinity-unknot-2]]))
 
 (defn prepare-poke
@@ -26,6 +26,8 @@
                            (and (= edge higher-edge) (has crossing (prev-edge knot edge)))))]
     (mapv
       (fn [crossing]
+        (when (or (= 2 (count-of crossing lower-edge)) (= 2 (count-of crossing higher-edge)))
+          (throw (UnsupportedOperationException. "Poke not implemented for edges that appear twice in the same crossing.")))
         (mapv
           (fn [edge]
             (cond
