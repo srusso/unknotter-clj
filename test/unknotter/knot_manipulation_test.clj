@@ -1,7 +1,8 @@
 (ns unknotter.knot-manipulation-test
   (:require [clojure.test :refer [deftest is testing]]
             [unknotter.diagram :refer [load-knot-diagram]]
-            [unknotter.knot-manipulation :refer [find-crossings-with-edge find-friend-crossing-index index-is-facing get-forth-index]]))
+            [unknotter.knot-manipulation :refer
+             [find-crossings-with-edge find-friend-crossing-index index-is-facing get-forth-index get-adjacent-faces]]))
 
 (deftest test-find-crossings-with-edge
   (testing "Get crossings with edge"
@@ -73,3 +74,26 @@
     (is (= (get-forth-index knot72 11) [2, 3]))
     (is (= (get-forth-index knot72 12) [5, 0]))
     (is (= (get-forth-index knot72 13) [1, 3]))))
+
+(deftest test-get-adjacent-faces
+  (testing
+    (is (= (get-adjacent-faces trefoil 1) [[1, -4], [1, 5, 3]]))
+    (is (= (get-adjacent-faces trefoil 2) [[2, 6, 4], [2, -5]]))
+    (is (= (get-adjacent-faces trefoil 3) [[3, -6], [3, 1, 5]]))
+    (is (= (get-adjacent-faces trefoil 4) [[4, 2, 6], [4, -1]]))
+    (is (= (get-adjacent-faces trefoil 5) [[5, -2], [5, 3, 1]]))
+    (is (= (get-adjacent-faces trefoil 6) [[6, 4, 2], [6, -3]]))
+
+    (is (= (get-adjacent-faces knot72 1) [[1, 9, 3], [1, -8, 11, -6, 13, -4]]))
+    (is (= (get-adjacent-faces knot72 2) [[2, -9], [2, 10, 8]]))
+    (is (= (get-adjacent-faces knot72 3) [[3, 1, 9], [3, -14, 5, -12, 7, -10]]))
+    (is (= (get-adjacent-faces knot72 4) [[4, -13, 6, -11, 8, -1], [4, 14]]))
+    (is (= (get-adjacent-faces knot72 5) [[5, 13], [5, -12, 7, -10, 3, -14]]))
+    (is (= (get-adjacent-faces knot72 6) [[6, -11, 8, -1, 4, -13], [6, 12]]))
+    (is (= (get-adjacent-faces knot72 7) [[7, 11], [7, -10, 3, -14, 5, -12]]))
+    (is (= (get-adjacent-faces knot72 8) [[8, -1, 4, -13, 6, -11], [8, 2, 10]]))
+    (is (= (get-adjacent-faces knot72 9) [[9, 3, 1], [9, -2]]))
+    (is (= (get-adjacent-faces knot72 10) [[10, -7, 12, -5, 14, -3], [10, 8, 2]]))
+    (is (= (get-adjacent-faces knot72 11) [[11, 7], [11, -6, 13, -4, 1, -8]]))
+    (is (= (get-adjacent-faces knot72 12) [[12, -5, 14, -3, 10, -7], [12, 6]]))
+    (is (= (get-adjacent-faces knot72 13) [[13, 5], [13, -4, 1, -8, 11, -6]]))))
