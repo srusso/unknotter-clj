@@ -1,4 +1,4 @@
-(ns unknotter.diagram
+(ns unknotter.resource-loader
   "We use Planar Diagrams (PD) to represent knots. See: https://katlas.org/wiki/Planar_Diagrams"
   (:require [clojure.java.io]
             [malli.core :as m]))

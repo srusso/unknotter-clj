@@ -1,7 +1,7 @@
 (ns unknotter.knot-manipulation
   (:require [unknotter.vectors :refer [index-of indexes-of has]]))
 
-(defn shift-modulo
+(defn- shift-modulo
   "Shift an edge by a given amount, wrapping around the number of edges."
   [knot edge amount]
   (+
@@ -103,3 +103,12 @@
   ![Adjacent Faces](insert-png-here.png)"
   [knot edge]
   [(get-adjacent-face knot edge -1) (get-adjacent-face knot edge 1)])
+
+(defn shifted [knot shift]
+  (mapv
+    (fn [crossing]
+      (mapv
+        (fn [edge]
+          (shift-modulo knot edge shift))
+        crossing))
+    knot))

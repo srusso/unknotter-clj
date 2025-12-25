@@ -1,6 +1,6 @@
 (ns unknotter.diagram-test
   (:require [clojure.test :refer [deftest is testing]]
-            [unknotter.diagram :refer [load-knot-diagram parse-knot-diagram]]))
+            [unknotter.resource-loader :refer [load-knot-diagram parse-knot-diagram]]))
 
 (deftest load-knot-diagram-test
   (testing "Knot Planar Diagram for 3_1 is loaded correctly, as a vector."

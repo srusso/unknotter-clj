@@ -1,5 +1,8 @@
 (ns unknotter.vectors)
 
+(defn equal-as-set [collection-1 collection-2]
+  (= (set collection-1) (set collection-2)))
+
 (defn has [collection item]
   (some #(= item %) collection))
 

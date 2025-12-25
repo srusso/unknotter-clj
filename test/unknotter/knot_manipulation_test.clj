@@ -1,6 +1,6 @@
 (ns unknotter.knot-manipulation-test
   (:require [clojure.test :refer [deftest is testing]]
-            [unknotter.diagram :refer [load-knot-diagram]]
+            [unknotter.resource-loader :refer [load-knot-diagram]]
             [unknotter.knot-manipulation :refer
              [find-crossings-with-edge find-friend-crossing-index index-is-facing get-forth-index get-adjacent-faces]]))
 
