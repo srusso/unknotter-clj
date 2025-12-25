@@ -1,5 +1,5 @@
 (ns unknotter.knot-manipulation
-  (:require [unknotter.vectors :refer [index-of indexes-of]]))
+  (:require [unknotter.vectors :refer [index-of indexes-of has]]))
 
 (defn shift-modulo
   "Shift an edge by a given amount, wrapping around the number of edges."
@@ -19,7 +19,7 @@
 (defn find-crossings-with-edge
   "Get a list of all crossings that are adjacent to a given edge."
   [knot edge]
-  (keep-indexed (fn [i crossing] (if (some #(= edge %) crossing) [i crossing] nil))
+  (keep-indexed (fn [i crossing] (if (has crossing edge) [i crossing] nil))
                 knot))
 
 (defn- edge-value [knot crossing-index edge-index]

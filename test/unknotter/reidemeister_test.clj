@@ -1,10 +1,18 @@
 (ns unknotter.reidemeister-test
   (:require [clojure.test :refer [deftest is testing]]
             [unknotter.diagram :refer [load-knot-diagram]]
-            [unknotter.reidemeister :refer [poke]]))
+            [unknotter.reidemeister :refer [poke prepare-poke]]))
 
 (def trefoil (load-knot-diagram :3_1))
 (def expected-poked-trefoil [[2 7 3 8] [3 9 4 8] [4 9 5 10] [6 1 7 2] [10 5 1 6]])
+
+(deftest test-prepare-poke
+  (testing
+    (is (= [[4 9 5 10] [8 3 9 4] [10 5 1 6]] (prepare-poke trefoil 1 4))))
+  (testing
+    (is (= [[2 9 3 10] [6 1 9 2] [10 3 1 4]] (prepare-poke trefoil 4 1))))
+  (testing
+    (is (= [[2 14 3 13] [6 18 9 17] [10 16 11 15] [12 2 13 1] [14 12 15 11] [16 10 17 9] [18 4 1 3]] (prepare-poke (load-knot-diagram :7_2) 4 1)))))
 
 (deftest test-poke
   (testing "Poke trefoil into star, under-edge: 1, over-edge: 4"

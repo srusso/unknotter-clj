@@ -1,5 +1,8 @@
 (ns unknotter.vectors)
 
+(defn has [collection item]
+  (some #(= item %) collection))
+
 (defn indexes-of
   "Returns the indexes of all the occurrences of the element in the collection.
   If not found, returns an empty vector."
