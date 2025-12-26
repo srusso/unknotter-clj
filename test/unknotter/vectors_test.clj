@@ -1,6 +1,6 @@
 (ns unknotter.vectors-test
   (:require [clojure.test :refer [deftest is testing]])
-  (:require [unknotter.vectors :refer [index-of count-of has equal-as-set]]))
+  (:require [unknotter.vectors :refer [index-of count-of has overlap? equal-as-set]]))
 
 (deftest index-of-test
   (testing
@@ -16,6 +16,11 @@
   (testing
     (is (= true (has [1 2 3] 1)))
     (is (= false (has [1 2 3] 4)))))
+
+(deftest overlap?-test
+  (testing
+    (is (= true (overlap? [1 2 3] [2 53])))
+    (is (= false (overlap? [1 2 3] [4 55])))))
 
 (deftest equal-as-set-test
   (testing

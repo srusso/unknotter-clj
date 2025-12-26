@@ -17,6 +17,12 @@
        (filter #(= % element))
        (count)))
 
+(defn overlap? [collection1 collection2]
+  (let [collection2-set (set collection2)]
+    (not (nil? (->> collection1
+                    (filter #(.contains collection2-set %))
+                    (first))))))
+
 (defn index-of
   "Returns the index of the first occurrence of the element in the collection.
   If not found, returns nil."
