@@ -4,7 +4,7 @@
             [unknotter.reidemeister.poke :refer [get-pokable-edges get-unpokable-edge-pairs]]
             [unknotter.reidemeister.slide :refer [get-slidable-faces]]))
 
-(defn- is-literally-unknot [knot] (<= (count knot) 2))
+(defn- is-literally-unknot [knot] (and (not-empty knot) (<= (count knot) 2)))
 
 (defn- apply-random-move [knot beta]
   (let [numerical_weights [(Math/pow Math/E (- beta))
@@ -31,7 +31,7 @@
     (nil?
       (some is-literally-unknot
             ; TODO call (unknotter.knot/is-valid) to assert that every move creates a valid knot
-            (take 2000 (iterate #(apply-random-move % 2) knot))))))
+            (mapv identity (take 2000 (iterate #(apply-random-move % 2) knot)))))))
 
 (defn -main []
   (println (is-unknot? thistlethwaite-unknot)))

@@ -63,5 +63,4 @@
                   deduped-triplets
                   (conj deduped-triplets [edge1 edge2 edge3]))))
             (set [])
-            slidable-edge-triplets)
-    ))
+            slidable-edge-triplets)))
