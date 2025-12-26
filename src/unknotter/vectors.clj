@@ -12,9 +12,11 @@
   [collection element]
   (mapv identity (keep-indexed (fn [i el] (if (= element el) i nil)) collection)))
 
-(defn count-of [collection element]
+(defn item-count-in
+  "Count occurrences of the item in the collection."
+  [collection item]
   (->> collection
-       (filter #(= % element))
+       (filter #(= % item))
        (count)))
 
 (defn overlap? [collection1 collection2]

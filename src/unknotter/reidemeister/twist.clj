@@ -1,12 +1,12 @@
 (ns unknotter.reidemeister.twist
   (:require [unknotter.knot :refer [is-infinity-unknot]]
             [unknotter.knot-manipulation :refer [next-edge next-edge-in-knot prev-edge shifted]]
-            [unknotter.vectors :refer [count-of has]]))
+            [unknotter.vectors :refer [item-count-in has]]))
 
 (defn- lies-on-twist
   "Return true if the edge lies on a twist, i.e. the crossing has only two edges."
   [crossing edge]
-  (= 2 (count-of crossing edge)))
+  (= 2 (item-count-in crossing edge)))
 
 (defn- prepare-twist [knot edge-to-twist]
   (mapv
