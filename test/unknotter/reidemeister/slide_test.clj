@@ -20,7 +20,10 @@
           (slide [[2 11 3 12] [3 8 4 9] [4 10 5 9] [5 1 6 12] [6 1 7 2] [7 10 8 11]] 2 7 11)
           [[1 10 2 11] [3 8 4 9] [4 10 5 9] [5 1 6 12] [6 11 7 12] [7 2 8 3]]))))
 
-(deftest test-slide-error
-  (testing
-    (is (thrown? IllegalArgumentException (slide trefoil 2 4 6)))
+(deftest test-slide-error-1
+  (testing "Can only slide three edges along the same face."
     (is (thrown? IllegalArgumentException (slide trefoil 1 2 4)))))
+
+(deftest test-slide-error-2
+  (testing "Given edges do not follow the correct pattern for a slide."
+    (is (thrown? IllegalArgumentException (slide trefoil 2 4 6)))))
