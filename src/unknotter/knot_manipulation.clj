@@ -108,7 +108,9 @@
 
 (defn get-adjacent-faces
   "Given a knot and an edge, returns the two adjacent faces: counterclockwise first, clockwise second.
-  ![Adjacent Faces](resources/imgs/adjacentfaces.png)"
+  The image below shows the clockwise adjacent face in green and counterclockwise in yello.
+  ![Adjacent Faces](https://github.com/srusso/unknotter-clj/blob/main/resources/imgs/adjacentfaces.png)
+  TODO: Make nicer picture."
   [knot edge]
   [(get-adjacent-face knot edge -1) (get-adjacent-face knot edge 1)])
 
