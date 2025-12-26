@@ -1,8 +1,8 @@
-(ns unknotter.reidemeister-test
+(ns unknotter.reidemeister.poke-test
   (:require [clojure.test :refer [deftest is testing]]
             [unknotter.resource-loader :refer [load-knot-diagram]]
             [unknotter.knot :refer [knot=]]
-            [unknotter.reidemeister :refer [poke prepare-poke]]))
+            [unknotter.reidemeister.poke :refer [poke prepare-poke]]))
 
 (def trefoil (load-knot-diagram :3_1))
 (def expected-poked-trefoil [[2 7 3 8] [3 9 4 8] [4 9 5 10] [6 1 7 2] [10 5 1 6]])
