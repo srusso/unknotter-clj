@@ -4,25 +4,27 @@
             [unknotter.resource-loader :refer [infinity-unknot-1 infinity-unknot-2]]))
 
 (defn prepare-poke
-  "Readjust the edge values of the knot with the expectation of a poke between the two edges.
-    If a given edge comes before the lower edge, leave it alone.
-    If a given edge is between the lower and higher edges, add two.
-    If a given edge comes after the higher edge, add four.
-    If it is the lower edge, leave it alone if it connects with the
-    previous edge or add two if it connects with the next edge.
-    If it is the higher edge, add two if it connects with the previous
-    edge or add four if it connects with the next edge."
+  "Readjust the edge values in crossings with the expectation of a poke between the two edges.
+  Diagram: https://github.com/srusso/unknotter-clj/blob/main/resources/imgs/preparepoke.png
+  TODO: Nicer diagram to explain this."
   [knot lower-edge higher-edge]
   (let [should-add-none (fn [crossing edge]
+                          ; Leave edge alone IN THIS CROSSING if...
                           (or
+                            ; it is before the lower edge
                             (< edge lower-edge)
                             (and
+                              ; or, it is the lower edge and connects with the previous edge
                               (= edge lower-edge)
                               (has crossing (prev-edge knot edge)))))
         should-add-two (fn [crossing edge]
+                         ; Add two if...
                          (or
+                           ; it is the lower edge (by exclusion from the previous test, it connects with the next edge)
                            (= edge lower-edge)
+                           ; or, it is between the lower and higher edges
                            (and (< lower-edge edge) (< edge higher-edge))
+                           ; or, it is the higher edge, and it connects with the previous edge
                            (and (= edge higher-edge) (has crossing (prev-edge knot edge)))))]
     (mapv
       (fn [crossing]
@@ -35,6 +37,9 @@
             (cond
               (should-add-none crossing edge) edge
               (should-add-two crossing edge) (+ edge 2)
+              ; Otherwise add four, if (by exclusion with previous tests):
+              ;   * the edge comes after the higher edge
+              ;   * or, it is the higher ege but connects with the next edge
               :else (+ edge 4)))
           crossing))
       knot)))
