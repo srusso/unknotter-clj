@@ -44,7 +44,14 @@
           crossing))
       knot)))
 
-(defn- poke-knot [knot under-edge over-edge]
+(defn- poke-knot
+  "We poke a knot by:
+    1. Modifying existing crossings via (prepare-poke) -> see documentation for that method, including diagram.
+    2. Adding two new crossings. The new crossings depend on the clockwise and counterclockwise
+       faces of the lower edge in the initial knot.
+    Referring to the diagram from the (prepare-poke) documentation, the following exemplifies adding two new crossings
+    in a simple example using the trefoil: https://github.com/srusso/unknotter-clj/blob/main/resources/imgs/pokeknot.png"
+  [knot under-edge over-edge]
   (let [lower-edge (min under-edge over-edge)
         higher-edge (max under-edge over-edge)
         [face-ccw face-cw] (get-adjacent-faces knot lower-edge)
@@ -61,6 +68,9 @@
           (if (= under-edge lower-edge)
             [[lower-edge, (+ higher-edge 3), (+ lower-edge 1), (+ higher-edge 2)]
              [(+ lower-edge 1), (+ higher-edge 3), (+ lower-edge 2), (+ higher-edge 4)]]
+
+            ; This is the case (counterclockwise face contains -higher-edge, and the under-edge is the higher edge)
+            ; shown in the diagram linked in the documentation of this method.
             [[(+ higher-edge 2), lower-edge, (+ higher-edge 3), (+ lower-edge 1)]
              [(+ higher-edge 3), (+ lower-edge 2), (+ higher-edge 4), (+ lower-edge 1)]])
           (has face-cw higher-edge)
