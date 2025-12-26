@@ -18,8 +18,7 @@
 
 (defn slide [knot edge1 edge2 edge3]
   (let [slide-edges [edge1 edge2 edge3]]
-    (mapv identity
-          (map-indexed
-            (fn [crossing-index crossing]
-              (slide-edges-in-crossing knot slide-edges crossing-index crossing))
-            knot))))
+    (map-indexed
+      (fn [crossing-index crossing]
+        (slide-edges-in-crossing knot slide-edges crossing-index crossing))
+      knot)))
