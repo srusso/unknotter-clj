@@ -34,6 +34,28 @@
       (let [prepared-knot (prepare-twist knot edge)]
         (conj prepared-knot (create-crossing edge))))))
 
+(defn left-positive-twist [knot edge-to-twist]
+  (if
+    (is-infinity-unknot knot)
+    (if (= edge-to-twist 1)
+      ; TODO exception if edge-to-twist is not either 1 or 2
+      [[1, 2, 2, 3], [3, 1, 4, 4]]
+      [[1, 4, 2, 1], [3, 2, 4, 3]])
+    (do-twist knot
+              edge-to-twist
+              (fn [edge] [(+ edge 0), (+ edge 2), (+ edge 1), (+ edge 1)]))))
+
+(defn left-negative-twist [knot edge-to-twist]
+  (if
+    (is-infinity-unknot knot)
+    (if (= edge-to-twist 1)
+      ; TODO exception if edge-to-twist is not either 1 or 2
+      [[1, 2, 2, 3], [4, 3, 1, 4]]
+      [[1, 4, 2, 1], [2, 4, 3, 3]])
+    (do-twist knot
+              edge-to-twist
+              (fn [edge] [(+ edge 1), (+ edge 0), (+ edge 2), (+ edge 1)]))))
+
 (defn right-positive-twist [knot edge-to-twist]
   (if
     (is-infinity-unknot knot)
