@@ -1,6 +1,6 @@
 (ns unknotter.reidemeister.twist
   (:require [unknotter.knot :refer [is-infinity-unknot]]
-            [unknotter.knot-manipulation :refer [next-edge prev-edge shifted]]
+            [unknotter.knot-manipulation :refer [next-edge next-edge-in-knot prev-edge shifted]]
             [unknotter.vectors :refer [count-of has]]))
 
 (defn- lies-on-twist
@@ -12,11 +12,13 @@
   (mapv
     (fn [crossing]
       (if (lies-on-twist crossing edge-to-twist)
-        (if (or
-              (= (next-edge knot (get crossing 0)) (get crossing 1))
-              (= (next-edge knot (next-edge knot (get crossing 0))) (get crossing 1)))
-          [(get crossing 0), (+ (get crossing 1) 2), (get crossing 2), (+ (get crossing 3) 2)]
-          [(+ (get crossing 0) 2), (get crossing 1), (+ (get crossing 2) 2), (get crossing 3)])
+        (let [[edge1 edge2 edge3 edge4] crossing
+              next (next-edge-in-knot knot)]
+          (if (or
+                (= edge2 (->> edge1 next))
+                (= edge2 (->> edge1 next next)))
+            [edge1, (+ edge2 2), edge3, (+ edge4 2)]
+            [(+ edge1 2), edge2, (+ edge3 2), edge4]))
         (mapv
           (fn [edge]
             (if (or (< edge edge-to-twist)
@@ -31,8 +33,7 @@
   (let [last-edge (* 2 (count knot))]
     (if (or (= edge 1) (= edge last-edge))
       (do-twist (shifted knot 1) (next-edge knot edge) create-crossing)
-      (let [prepared-knot (prepare-twist knot edge)]
-        (conj prepared-knot (create-crossing edge))))))
+      (conj (prepare-twist knot edge) (create-crossing edge)))))
 
 (defn left-positive-twist [knot edge-to-twist]
   (if

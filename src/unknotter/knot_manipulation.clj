@@ -25,6 +25,16 @@
   "Same as (next-edge) but walks backwards, i.e. returns the edge _before_ the given edge."
   [knot edge] (walk-along-knot knot edge -1))
 
+(defn next-edge-in-knot
+  "Function that moves an edge to its next edge in the given knot."
+  [knot]
+  #(next-edge knot %))
+
+(defn prev-edge-in-knot
+  "Function that moves an edge to its previous edge in the given knot."
+  [knot]
+  #(prev-edge knot %))
+
 (defn find-crossings-with-edge
   "Get a list of all crossings that are adjacent to a given edge.
    It returns either 1 or two crossings. Throws an exception if 0 or more than 2 crossings are found."
