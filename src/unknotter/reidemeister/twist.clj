@@ -92,5 +92,4 @@
   (let [crossings-with-three-edges (filter #(= 3 (count (set %))) knot)]
     (map (fn [crossing]
            (apply max-key #(item-count-in crossing %) crossing))
-         crossings-with-three-edges)
-    ))
+         crossings-with-three-edges)))

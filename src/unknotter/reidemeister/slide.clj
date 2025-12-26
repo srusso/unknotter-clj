@@ -1,6 +1,7 @@
 (ns unknotter.reidemeister.slide
   (:require [unknotter.knot-manipulation :refer [find-friend-crossing-index get-adjacent-faces
                                                  is-closed is-half-open is-open]]
+            [unknotter.knot :refer [get-all-edges]]
             [unknotter.vectors :refer [count-of has overlap?]]
             [unknotter.face :refer [face=ignoring-direction]]))
 
@@ -44,5 +45,23 @@
       #(slide-edges-in-crossing knot three-edged-face %1 %2)
       knot)))
 
+; Practically identical to (get-unpokable-edge-pairs). Refactor?
 (defn get-slidable-faces [knot]
-  )
+  (let [slidable-edge-triplets (->> (get-all-edges knot)
+                                    (map #(get-adjacent-faces knot %))
+                                    ; flatten the faces
+                                    (apply concat)
+                                    (filter (fn [face] (= 3 (count face))))
+                                    (filter (fn [[edge1 edge2 edge3]] (is-slidable knot [edge1 edge2 edge3])))
+                                    (map (fn [[edge1 edge2]] (sort [(abs edge1) (abs edge2)]))))]
+    (reduce (fn [deduped-triplets [edge1 edge2 edge3]]
+              (let [flattened-triplets (flatten deduped-triplets)]
+                (if (or
+                      (has flattened-triplets edge1)
+                      (has flattened-triplets edge2)
+                      (has flattened-triplets edge3))
+                  deduped-triplets
+                  (conj deduped-triplets [edge1 edge2]))))
+            (set [])
+            slidable-edge-triplets)
+    ))

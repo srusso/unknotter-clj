@@ -1,6 +1,6 @@
 (ns unknotter.reidemeister.poke
   (:require [unknotter.knot :refer [get-all-edges infinity-unknot-1 infinity-unknot-2]]
-            [unknotter.knot-manipulation :refer [get-adjacent-faces prev-edge]]
+            [unknotter.knot-manipulation :refer [get-adjacent-faces prev-edge is-closed is-open]]
             [unknotter.vectors :refer [has item-count-in]]))
 
 (defn prepare-poke
@@ -112,12 +112,33 @@
                           set)]
     (map (fn [e] [edge e]) pokable-with)))
 
+(defn- is-unpokable [knot edge1 edge2]
+  (or
+    (and (is-open knot edge1) (is-closed knot edge2))
+    (and (is-open knot edge2) (is-closed knot edge1))))
+
 (defn get-pokable-edges [knot]
   (->> (get-all-edges knot)
        (map (fn [edge] (get-pokable-edges-with knot edge)))))
 
 (defn- get-unpokable-edge-pairs- [knot]
-  )
+  (let [unpokable-edge-pairs (->> (get-all-edges knot)
+                                 (map #(get-adjacent-faces knot %))
+                                 ; flatten the faces
+                                 (apply concat)
+                                 (filter (fn [face] (= 2 (count face))))
+                                 (filter (fn [[edge1 edge2]] (is-unpokable knot edge1 edge2)))
+                                 (map (fn [[edge1 edge2]] (sort [(abs edge1) (abs edge2)]))))]
+    (reduce (fn [deduped-pairs [edge1 edge2]]
+              (let [flattened-pairs (flatten deduped-pairs)]
+                (if (or
+                      (has flattened-pairs edge1)
+                      (has flattened-pairs edge2))
+                  deduped-pairs
+                  (conj deduped-pairs [edge1 edge2]))))
+            (set [])
+            unpokable-edge-pairs)
+    ))
 
 (defn get-unpokable-edge-pairs [knot]
   (if (<= (count knot) 2)
