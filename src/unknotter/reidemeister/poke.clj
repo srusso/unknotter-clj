@@ -49,8 +49,10 @@
     1. Modifying existing crossings via (prepare-poke) -> see documentation for that method, including diagram.
     2. Adding two new crossings. The new crossings depend on the clockwise and counterclockwise
        faces of the lower edge in the initial knot.
-    Referring to the diagram from the (prepare-poke) documentation, the following exemplifies adding two new crossings
-    in a simple example using the trefoil: https://github.com/srusso/unknotter-clj/blob/main/resources/imgs/pokeknot.png"
+    There isn't really a nice way to make this function more readable; there are 8 possible situations, each
+    producing two different new crossings. You simply need to do all eight by hand to check that these are correct.
+    Referring to the diagram from the (prepare-poke) documentation, one of the eight possibilities is
+    shown here: https://github.com/srusso/unknotter-clj/blob/main/resources/imgs/pokeknot.png"
   [knot under-edge over-edge]
   (let [lower-edge (min under-edge over-edge)
         higher-edge (max under-edge over-edge)
