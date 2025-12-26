@@ -132,3 +132,41 @@
           (walk-along-knot knot edge shift))
         crossing))
     knot))
+
+;def _is_closed(self, edge: Edge) -> bool:
+;        adj_crossings = [crossing for crossing in self.pd_code if edge in crossing]
+;        return all(edge in [crossing[0], crossing[2]] for crossing in adj_crossings)
+;
+;    def _is_open(self, edge: Edge) -> bool:
+;        adj_crossings = [crossing for crossing in self.pd_code if edge in crossing]
+;        return all(edge in [crossing[1], crossing[3]] for crossing in adj_crossings)
+
+(defn is-open
+  "Check if an edge on a diagram is open.
+  An edge is closed if, on both of the crossings it connects to, it crosses underneath."
+  [knot edge]
+  (let [adjacent-crossings (find-crossings-with-edge knot edge)]
+    (every? (fn [[_ [_ edge2 _ edge4]]]
+              (or
+                (= edge edge2)
+                (= edge edge4)))
+            adjacent-crossings)))
+
+(defn is-closed
+  "Check if an edge on a diagram is closed.
+  An edge is closed if, on both of the crossings it connects to, it crosses underneath."
+  [knot edge]
+  (let [adjacent-crossings (find-crossings-with-edge knot edge)]
+    (every? (fn [[_ [edge1 _ edge3 _]]]
+              (or
+                (= edge edge1)
+                (= edge edge3)))
+            adjacent-crossings)))
+
+(defn is-half-open
+  "Check if an edge on a diagram is half-open.
+  An edge is half-open if it crosses over one of its crossings and under the other."
+  [knot edge]
+  (and
+    (not (is-closed knot edge))
+    (not (is-open knot edge))))

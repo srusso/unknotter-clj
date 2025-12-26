@@ -1,6 +1,16 @@
 (ns unknotter.reidemeister.slide
   (:require [unknotter.vectors :refer [has overlap?]]
-            [unknotter.knot-manipulation :refer [find-friend-crossing-index get-adjacent-faces]]))
+            [unknotter.knot-manipulation :refer [find-friend-crossing-index get-adjacent-faces
+                                                 is-open is-closed is-half-open]]))
+
+(defn- is-slidable [knot [face-edge-1 face-edge-2 face-edge-3]]
+  (or
+    (and (is-open knot face-edge-1) (is-closed knot face-edge-2) (is-half-open knot face-edge-3))
+    (and (is-open knot face-edge-1) (is-closed knot face-edge-3) (is-half-open knot face-edge-2))
+    (and (is-open knot face-edge-2) (is-closed knot face-edge-1) (is-half-open knot face-edge-3))
+    (and (is-open knot face-edge-2) (is-closed knot face-edge-3) (is-half-open knot face-edge-1))
+    (and (is-open knot face-edge-3) (is-closed knot face-edge-1) (is-half-open knot face-edge-2))
+    (and (is-open knot face-edge-3) (is-closed knot face-edge-2) (is-half-open knot face-edge-1))))
 
 (defn- face-edges-in-crossing [knot face-edges crossing-index crossing]
   (let [updated-edge-value (fn [crossing edge-index] (get crossing (mod (+ edge-index 2) 4)))
@@ -36,16 +46,8 @@
                      (= 3 (count face-cw))))
       (throw (IllegalArgumentException. (str "Can only slide three edges along the same face."))))
 
-    (when-not ()
+    (when-not (is-slidable knot face-edges)
       (throw (IllegalArgumentException. (str "Given edges do not follow the correct pattern for a slide."))))
-
-    ;if not (all(edge in face_ccw or -edge in face_ccw for edge in edges) and len(face_ccw) == 3 or all(edge in face_cw or -edge in face_cw for edge in edges) and len(face_cw) == 3):
-    ;    raise ReidemeisterError("can only slide three edges along the same face.")
-    ;
-    ;# Check if edges are layered properly
-    ;if not _is_slidable(self, edge1, edge2, edge3):
-    ;    raise ReidemeisterError("given edges do not follow the correct pattern for a slide.")
-
 
     (map-indexed
       #(face-edges-in-crossing knot face-edges %1 %2)
