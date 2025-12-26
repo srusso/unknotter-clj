@@ -12,6 +12,11 @@
   [collection element]
   (mapv identity (keep-indexed (fn [i el] (if (= element el) i nil)) collection)))
 
+(defn count-of
+  "Count how many items in the collection satisfy the given predicate."
+  [collection predicate]
+  (count (filter predicate collection)))
+
 (defn item-count-in
   "Count occurrences of the item in the collection."
   [collection item]

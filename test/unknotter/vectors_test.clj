@@ -1,12 +1,17 @@
 (ns unknotter.vectors-test
   (:require [clojure.test :refer [deftest is testing]])
-  (:require [unknotter.vectors :refer [index-of item-count-in has overlap? equal-as-set]]))
+  (:require [unknotter.vectors :refer [index-of item-count-in has overlap? equal-as-set count-of]]))
 
 (deftest index-of-test
   (testing
     (is (= 2 (index-of [1 2 3] 3)))))
 
 (deftest count-of-test
+  (testing
+    (is (= 2 (count-of [1 2 3 4] even?)))
+    (is (= 3 (count-of [[1 2] [] [] [] [1]] empty?)))))
+
+(deftest item-count-in-test
   (testing
     (is (= 0 (item-count-in [1 2 3] 4)))
     (is (= 1 (item-count-in [1 2 3] 3)))

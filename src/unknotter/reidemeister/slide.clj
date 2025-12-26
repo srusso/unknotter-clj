@@ -1,21 +1,20 @@
 (ns unknotter.reidemeister.slide
-  (:require [unknotter.vectors :refer [has overlap?]]
+  (:require [unknotter.vectors :refer [has overlap? count-of]]
             [unknotter.knot-manipulation :refer [find-friend-crossing-index get-adjacent-faces
                                                  is-open is-closed is-half-open]]))
 
-(defn- is-slidable [knot [face-edge-1 face-edge-2 face-edge-3]]
-  (or
-    (and (is-open knot face-edge-1) (is-closed knot face-edge-2) (is-half-open knot face-edge-3))
-    (and (is-open knot face-edge-1) (is-closed knot face-edge-3) (is-half-open knot face-edge-2))
-    (and (is-open knot face-edge-2) (is-closed knot face-edge-1) (is-half-open knot face-edge-3))
-    (and (is-open knot face-edge-2) (is-closed knot face-edge-3) (is-half-open knot face-edge-1))
-    (and (is-open knot face-edge-3) (is-closed knot face-edge-1) (is-half-open knot face-edge-2))
-    (and (is-open knot face-edge-3) (is-closed knot face-edge-2) (is-half-open knot face-edge-1))))
+(defn- is-slidable
+  "A face can be slided over if it has one open edge, one closed edge, and one half-open edge."
+  [knot three-edged-face]
+  (= 1
+     (count-of three-edged-face #(is-open knot %))
+     (count-of three-edged-face #(is-closed knot %))
+     (count-of three-edged-face #(is-half-open knot %))))
 
-(defn- face-edges-in-crossing [knot face-edges crossing-index crossing]
+(defn- slide-edges-in-crossing [knot three-edged-face crossing-index crossing]
   (let [updated-edge-value (fn [crossing edge-index] (get crossing (mod (+ edge-index 2) 4)))
-        crossing-involves-face-edges (overlap? crossing face-edges)
-        is-face-edge (fn [edge-index] (has face-edges (get crossing edge-index)))]
+        crossing-involves-face-edges (overlap? crossing three-edged-face)
+        is-face-edge (fn [edge-index] (has three-edged-face (get crossing edge-index)))]
     (map-indexed
       (fn [edge-index edge]
         (cond
@@ -30,25 +29,25 @@
 (defn slide
   "Slide an edge over the face formed by the three given edges."
   [knot edge1 edge2 edge3]
-  (let [face-edges [edge1 edge2 edge3]
+  (let [three-edged-face [edge1 edge2 edge3]
         [face-ccw face-cw] (get-adjacent-faces knot edge1)]
 
     (when-not (or
                 (and (every? #(or
                                (has face-ccw %)
                                (has face-ccw (- %))
-                               ) face-edges)
+                               ) three-edged-face)
                      (= 3 (count face-ccw)))
                 (and (every? #(or
                                 (has face-cw %)
                                 (has face-cw (- %))
-                                ) face-edges)
+                                ) three-edged-face)
                      (= 3 (count face-cw))))
       (throw (IllegalArgumentException. (str "Can only slide three edges along the same face."))))
 
-    (when-not (is-slidable knot face-edges)
+    (when-not (is-slidable knot three-edged-face)
       (throw (IllegalArgumentException. (str "Given edges do not follow the correct pattern for a slide."))))
 
     (map-indexed
-      #(face-edges-in-crossing knot face-edges %1 %2)
+      #(slide-edges-in-crossing knot three-edged-face %1 %2)
       knot)))
