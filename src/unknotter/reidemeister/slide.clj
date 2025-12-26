@@ -1,7 +1,7 @@
 (ns unknotter.reidemeister.slide
-  (:require [unknotter.vectors :refer [has overlap? count-of]]
-            [unknotter.knot-manipulation :refer [find-friend-crossing-index get-adjacent-faces
-                                                 is-open is-closed is-half-open]]))
+  (:require [unknotter.knot-manipulation :refer [find-friend-crossing-index get-adjacent-faces
+                                                 is-closed is-half-open is-open]]
+            [unknotter.vectors :refer [count-of has overlap?]]))
 
 (defn- is-slidable
   "A face can be slided over if it has one open edge, one closed edge, and one half-open edge."
@@ -30,19 +30,13 @@
   "Slide an edge over the face formed by the three given edges."
   [knot edge1 edge2 edge3]
   (let [three-edged-face [edge1 edge2 edge3]
-        [face-ccw face-cw] (get-adjacent-faces knot edge1)]
+        [face-ccw face-cw] (get-adjacent-faces knot edge1)
+        face-equal-ignoring-direction
+        (fn [face1 face2] (and (every? #(overlap? face1 [% (- %)]) face2)
+                    (= (count face1) (count face2))))]
 
-    (when-not (or
-                (and (every? #(or
-                               (has face-ccw %)
-                               (has face-ccw (- %))
-                               ) three-edged-face)
-                     (= 3 (count face-ccw)))
-                (and (every? #(or
-                                (has face-cw %)
-                                (has face-cw (- %))
-                                ) three-edged-face)
-                     (= 3 (count face-cw))))
+    (when-not (or (face-equal-ignoring-direction face-ccw three-edged-face)
+                  (face-equal-ignoring-direction face-cw three-edged-face))
       (throw (IllegalArgumentException. (str "Can only slide three edges along the same face."))))
 
     (when-not (is-slidable knot three-edged-face)
