@@ -108,7 +108,7 @@
 
 (defn get-adjacent-faces
   "Given a knot and an edge, returns the two adjacent faces: counterclockwise first, clockwise second.
-  ![Adjacent Faces](TODO-insert-png-here.png)"
+  ![Adjacent Faces](resources/imgs/adjacentfaces.png)"
   [knot edge]
   [(get-adjacent-face knot edge -1) (get-adjacent-face knot edge 1)])
 
