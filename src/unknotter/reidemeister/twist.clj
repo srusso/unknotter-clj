@@ -78,6 +78,9 @@
               edge-to-twist
               (fn [edge] [edge (+ edge 1) (+ edge 1) (+ edge 2)]))))
 
+(defn untwist [knot edge]
+  (throw (UnsupportedOperationException. "Implement me.")))
+
 (def get-twistable-edges get-all-edges)
 
 (defn- extract-edge-with-count-2 [crossing]

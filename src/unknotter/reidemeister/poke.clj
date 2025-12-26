@@ -104,6 +104,9 @@
                                  [[4 2 5 1] [5 2 6 3] [6 4 1 3]])
     :else (poke-knot knot under-edge over-edge)))
 
+(defn unpoke [knot edge1 edge2]
+  (throw (UnsupportedOperationException. "Implement me.")))
+
 (defn- get-pokable-edges-with [knot edge]
   (let [[face-ccw face-cw] (get-adjacent-faces knot edge)
         pokable-with (->> (concat face-ccw face-cw)
@@ -117,7 +120,7 @@
     (and (is-open knot edge1) (is-closed knot edge2))
     (and (is-open knot edge2) (is-closed knot edge1))))
 
-(defn get-pokable-edges [knot]
+(defn get-pokable-edge-pairs [knot]
   (->> (get-all-edges knot)
        (map (fn [edge] (get-pokable-edges-with knot edge)))))
 
