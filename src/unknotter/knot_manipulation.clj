@@ -1,39 +1,6 @@
 (ns unknotter.knot-manipulation
   (:require [unknotter.vectors :refer [has index-of indexes-of]]
-            [unknotter.knot :refer [edge-count]]))
-
-(defn- walk-along-knot
-  "Walks along the knot by the specified amount of steps, starting from the specified edge.
-   Return the edge encountered after the last step.
-   Each step moves to the following edge (or previous if steps < 0).
-   Imagine the trefoil, which has 6 edges (ignore crossings):
-      -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 ->v
-      |                               |
-      ^--------<----------<-----------<
-   Example: if you start from edge 2 and walk three steps, you end up at 5."
-  [knot starting-edge steps]
-  (+
-    (mod (+ starting-edge (- steps 1)) (edge-count knot))
-    1))
-
-(defn next-edge
-  "Gets the edge after the given edge, following the knot's orientation.
-  A new edge is born after each under-crossing and over-crossing."
-  [knot edge] (walk-along-knot knot edge 1))
-
-(defn prev-edge
-  "Same as (next-edge) but walks backwards, i.e. returns the edge _before_ the given edge."
-  [knot edge] (walk-along-knot knot edge -1))
-
-(defn next-edge-in-knot
-  "Function that moves an edge to its next edge in the given knot."
-  [knot]
-  #(next-edge knot %))
-
-(defn prev-edge-in-knot
-  "Function that moves an edge to its previous edge in the given knot."
-  [knot]
-  #(prev-edge knot %))
+            [unknotter.knot :refer [next-edge]]))
 
 (defn find-crossings-with-edge
   "Get a list of all crossings that are adjacent to a given edge.
@@ -123,15 +90,6 @@
   TODO: Make nicer picture."
   [knot edge]
   [(get-adjacent-face knot edge -1) (get-adjacent-face knot edge 1)])
-
-(defn shifted [knot shift]
-  (mapv
-    (fn [crossing]
-      (mapv
-        (fn [edge]
-          (walk-along-knot knot edge shift))
-        crossing))
-    knot))
 
 (defn- crosses-over
   "Return true if the edge crosses the given crossing over.

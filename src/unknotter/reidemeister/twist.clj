@@ -1,6 +1,5 @@
 (ns unknotter.reidemeister.twist
-  (:require [unknotter.knot :refer [is-infinity-unknot get-all-edges]]
-            [unknotter.knot-manipulation :refer [next-edge next-edge-in-knot prev-edge shifted]]
+  (:require [unknotter.knot :refer [is-infinity-unknot get-all-edges next-edge next-edge-in-knot prev-edge shifted]]
             [unknotter.vectors :refer [item-count-in has]]))
 
 (defn- lies-on-twist

@@ -1,6 +1,6 @@
 (ns unknotter.reidemeister.poke
-  (:require [unknotter.knot :refer [get-all-edges infinity-unknot-1 infinity-unknot-2]]
-            [unknotter.knot-manipulation :refer [get-adjacent-faces prev-edge is-closed is-open]]
+  (:require [unknotter.knot :refer [get-all-edges infinity-unknot-1 infinity-unknot-2 prev-edge]]
+            [unknotter.knot-manipulation :refer [get-adjacent-faces is-closed is-open]]
             [unknotter.vectors :refer [has item-count-in]]))
 
 (defn prepare-poke

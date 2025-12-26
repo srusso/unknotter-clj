@@ -31,3 +31,6 @@
       (some is-literally-unknot
             ; TODO call (unknotter.knot/is-valid) to assert that every move creates a valid knot
             (take 2000 (iterate #(apply-random-move % 2) knot))))))
+
+(defn -main []
+  (println "Hello"))
