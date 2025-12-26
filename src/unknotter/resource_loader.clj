@@ -21,9 +21,6 @@
               (assoc knot-diagram-map (keyword knot-name) knot-data))
             {})))
 
-(def infinity-unknot-1 [[1 2 2 1]])
-(def infinity-unknot-2 [[1 1 2 2]])
-
 ; schema for "vector of integer vectors, the inner vectors having a size of 4"
 (def knot-diagram-schema [:vector [:repeat {:min 4, :max 4} :int]])
 

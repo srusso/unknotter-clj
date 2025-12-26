@@ -1,7 +1,7 @@
 (ns unknotter.reidemeister.poke
   (:require [unknotter.knot-manipulation :refer [get-adjacent-faces prev-edge]]
             [unknotter.vectors :refer [has count-of]]
-            [unknotter.resource-loader :refer [infinity-unknot-1 infinity-unknot-2]]))
+            [unknotter.knot :refer [infinity-unknot-1 infinity-unknot-2]]))
 
 (defn prepare-poke
   "Readjust the edge values in crossings with the expectation of a poke between the two edges.

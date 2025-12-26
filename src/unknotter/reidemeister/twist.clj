@@ -1,5 +1,6 @@
 (ns unknotter.reidemeister.twist
-  (:require [unknotter.knot-manipulation :refer [next-edge prev-edge shifted]]
+  (:require [unknotter.knot :refer [is-infinity-unknot]]
+            [unknotter.knot-manipulation :refer [next-edge prev-edge shifted]]
             [unknotter.vectors :refer [count-of has]]))
 
 (defn- lies-on-twist
@@ -26,9 +27,17 @@
       )
     knot))
 
-(defn right-positive-twist [knot edge]
+(defn- do-right-positive-twist [knot edge]
   (let [last-edge (* 2 (count knot))]
     (if (or (= edge 1) (= edge last-edge))
-      (right-positive-twist (shifted knot 1) (next-edge knot edge))
+      (do-right-positive-twist (shifted knot 1) (next-edge knot edge))
       (let [prepared-knot (prepare-twist knot edge)]
         (conj prepared-knot [(+ edge 1), (+ edge 1), (+ edge 2), edge])))))
+
+(defn right-positive-twist [knot edge-to-twist]
+  (if
+    (is-infinity-unknot knot)
+    (if (= edge-to-twist 1)
+      [[1, 2, 2, 3], [3, 4, 4, 1]]
+      [[1, 4, 2, 1], [3, 3, 4, 2]])
+    (do-right-positive-twist knot edge-to-twist)))

@@ -1,7 +1,7 @@
 (ns unknotter.reidemeister.poke-test
   (:require [clojure.test :refer [deftest is testing]]
             [unknotter.resource-loader :refer [load-knot-diagram]]
-            [unknotter.knot :refer [knot=]]
+            [unknotter.knot :refer [knot= infinity-unknot-1 infinity-unknot-2]]
             [unknotter.reidemeister.poke :refer [poke prepare-poke]]))
 
 (def trefoil (load-knot-diagram :3_1))
@@ -32,11 +32,11 @@
 (deftest test-poke-infinity-unknots
   (testing "Poke infinity unknot"
     (is (knot=
-          (poke [[1 2 2 1]] 1 2)
+          (poke infinity-unknot-1 1 2)
           [[1 4 2 5] [2 6 3 5] [3 6 4 1]])))
   (testing "Poke infinity unknot 2"
     (is (knot=
-          (poke [[1 1 2 2]] 2 1)
+          (poke infinity-unknot-2 2 1)
           [[4 2 5 1] [5 2 6 3] [6 4 1 3]]))))
 
 (deftest test-illegal-poke
