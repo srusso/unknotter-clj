@@ -1,5 +1,5 @@
 (ns unknotter.knot-manipulation
-  (:require [unknotter.vectors :refer [index-of indexes-of has]]))
+  (:require [unknotter.vectors :refer [has index-of indexes-of]]))
 
 (defn- walk-along-knot
   "Walks along the knot by the specified amount of steps, starting from the specified edge.
@@ -133,23 +133,26 @@
         crossing))
     knot))
 
-;def _is_closed(self, edge: Edge) -> bool:
-;        adj_crossings = [crossing for crossing in self.pd_code if edge in crossing]
-;        return all(edge in [crossing[0], crossing[2]] for crossing in adj_crossings)
-;
-;    def _is_open(self, edge: Edge) -> bool:
-;        adj_crossings = [crossing for crossing in self.pd_code if edge in crossing]
-;        return all(edge in [crossing[1], crossing[3]] for crossing in adj_crossings)
+(defn- crosses-over
+  "Return true if the edge crosses the given crossing over.
+   No error checking: it is assumed that the edge does belong to the crossing.
+   Remember that in PD notation, the second and fourth edges in a crossing cross over."
+  [[_ over-edge-1 _ over-edge-2] edge]
+  (or (= edge over-edge-1) (= edge over-edge-2)))
+
+(defn- crosses-underneath
+  "Return true if the edge crosses the given crossing underneath.
+   No error checking: it is assumed that the edge does belong to the crossing.
+   Remember that in PD notation, the first and third edges in a crossing cross underneath."
+  [[underneath-edge-1 _ underneath-edge-2 _] edge]
+  (or (= edge underneath-edge-1) (= edge underneath-edge-2)))
 
 (defn is-open
   "Check if an edge on a diagram is open.
-  An edge is closed if, on both of the crossings it connects to, it crosses underneath."
+  An edge is open if, on both of the crossings it connects to, it crosses over."
   [knot edge]
   (let [adjacent-crossings (find-crossings-with-edge knot edge)]
-    (every? (fn [[_ [_ edge2 _ edge4]]]
-              (or
-                (= edge edge2)
-                (= edge edge4)))
+    (every? (fn [[_ adj-crossing]] (crosses-over adj-crossing edge))
             adjacent-crossings)))
 
 (defn is-closed
@@ -157,10 +160,7 @@
   An edge is closed if, on both of the crossings it connects to, it crosses underneath."
   [knot edge]
   (let [adjacent-crossings (find-crossings-with-edge knot edge)]
-    (every? (fn [[_ [edge1 _ edge3 _]]]
-              (or
-                (= edge edge1)
-                (= edge edge3)))
+    (every? (fn [[_ adj-crossing]] (crosses-underneath adj-crossing edge))
             adjacent-crossings)))
 
 (defn is-half-open
