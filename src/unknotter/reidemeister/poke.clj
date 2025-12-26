@@ -127,7 +127,7 @@
                                  ; flatten the faces
                                  (apply concat)
                                  (filter (fn [face] (= 2 (count face))))
-                                 (filter (fn [[edge1 edge2]] (is-unpokable knot edge1 edge2)))
+                                 (filter (fn [[edge1 edge2]] (is-unpokable knot (abs edge1) (abs edge2))))
                                  (map (fn [[edge1 edge2]] (sort [(abs edge1) (abs edge2)]))))]
     (reduce (fn [deduped-pairs [edge1 edge2]]
               (let [flattened-pairs (flatten deduped-pairs)]

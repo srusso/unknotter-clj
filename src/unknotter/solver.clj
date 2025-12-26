@@ -1,5 +1,6 @@
 (ns unknotter.solver
   (:require [unknotter.reidemeister.twist :refer [get-twistable-edges get-untwistable-edges]]
+            [unknotter.knot :refer [thistlethwaite-unknot]]
             [unknotter.reidemeister.poke :refer [get-pokable-edges get-unpokable-edge-pairs]]
             [unknotter.reidemeister.slide :refer [get-slidable-faces]]))
 
@@ -33,4 +34,4 @@
             (take 2000 (iterate #(apply-random-move % 2) knot))))))
 
 (defn -main []
-  (println "Hello"))
+  (println (is-unknot? thistlethwaite-unknot)))

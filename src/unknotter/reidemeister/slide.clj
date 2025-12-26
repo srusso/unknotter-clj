@@ -52,8 +52,8 @@
                                     ; flatten the faces
                                     (apply concat)
                                     (filter (fn [face] (= 3 (count face))))
-                                    (filter (fn [[edge1 edge2 edge3]] (is-slidable knot [edge1 edge2 edge3])))
-                                    (map (fn [[edge1 edge2]] (sort [(abs edge1) (abs edge2)]))))]
+                                    (filter (fn [[edge1 edge2 edge3]] (is-slidable knot [(abs edge1) (abs edge2) (abs edge3)])))
+                                    (map (fn [[edge1 edge2 edge3]] (sort [(abs edge1) (abs edge2) (abs edge3)]))))]
     (reduce (fn [deduped-triplets [edge1 edge2 edge3]]
               (let [flattened-triplets (flatten deduped-triplets)]
                 (if (or
@@ -61,7 +61,7 @@
                       (has flattened-triplets edge2)
                       (has flattened-triplets edge3))
                   deduped-triplets
-                  (conj deduped-triplets [edge1 edge2]))))
+                  (conj deduped-triplets [edge1 edge2 edge3]))))
             (set [])
             slidable-edge-triplets)
     ))
