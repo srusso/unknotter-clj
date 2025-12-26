@@ -1,7 +1,7 @@
 (ns unknotter.reidemeister.poke
-  (:require [unknotter.knot-manipulation :refer [get-adjacent-faces prev-edge]]
-            [unknotter.vectors :refer [has item-count-in]]
-            [unknotter.knot :refer [infinity-unknot-1 infinity-unknot-2]]))
+  (:require [unknotter.knot :refer [get-all-edges infinity-unknot-1 infinity-unknot-2]]
+            [unknotter.knot-manipulation :refer [get-adjacent-faces prev-edge]]
+            [unknotter.vectors :refer [has item-count-in]]))
 
 (defn prepare-poke
   "Readjust the edge values in crossings with the expectation of a poke between the two edges.
@@ -103,3 +103,23 @@
                                  [[1 4 2 5] [2 6 3 5] [6 4 1 3]]
                                  [[4 2 5 1] [5 2 6 3] [6 4 1 3]])
     :else (poke-knot knot under-edge over-edge)))
+
+(defn- get-pokable-edges-with [knot edge]
+  (let [[face-ccw face-cw] (get-adjacent-faces knot edge)
+        pokable-with (->> (concat face-ccw face-cw)
+                          (map abs)
+                          (filter #(not= edge %))
+                          set)]
+    (map (fn [e] [edge e]) pokable-with)))
+
+(defn get-pokable-edges [knot]
+  (->> (get-all-edges knot)
+       (map (fn [edge] (get-pokable-edges-with knot edge)))))
+
+(defn- get-unpokable-edge-pairs- [knot]
+  )
+
+(defn get-unpokable-edge-pairs [knot]
+  (if (<= (count knot) 2)
+    []
+    (get-unpokable-edge-pairs- knot)))

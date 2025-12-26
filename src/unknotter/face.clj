@@ -1,5 +1,5 @@
 (ns unknotter.face
-  (:require [unknotter.vectors :refer [overlap? equal-as-set]]))
+  (:require [unknotter.vectors :refer [equal-as-set]]))
 
 (defn- ignoring-edge-direction [face]
   (map abs face))

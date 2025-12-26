@@ -14,3 +14,12 @@
 
 (defn is-infinity-unknot [knot]
   (or (knot= knot infinity-unknot-1) (knot= knot infinity-unknot-2)))
+
+(defn is-valid [knot]
+  (throw (UnsupportedOperationException. "Implement me.")))
+
+(defn edge-count [knot]
+  (* 2 (count knot)))
+
+(defn get-all-edges [knot]
+  (range 1 (+ 1 (edge-count knot))))

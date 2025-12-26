@@ -43,3 +43,6 @@
     (map-indexed
       #(slide-edges-in-crossing knot three-edged-face %1 %2)
       knot)))
+
+(defn get-slidable-faces [knot]
+  )

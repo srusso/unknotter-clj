@@ -1,5 +1,5 @@
 (ns unknotter.reidemeister.twist
-  (:require [unknotter.knot :refer [is-infinity-unknot]]
+  (:require [unknotter.knot :refer [is-infinity-unknot get-all-edges]]
             [unknotter.knot-manipulation :refer [next-edge next-edge-in-knot prev-edge shifted]]
             [unknotter.vectors :refer [item-count-in has]]))
 
@@ -78,3 +78,19 @@
     (do-twist knot
               edge-to-twist
               (fn [edge] [edge (+ edge 1) (+ edge 1) (+ edge 2)]))))
+
+(def get-twistable-edges get-all-edges)
+
+(defn- extract-edge-with-count-2 [crossing]
+  (flatten (filter (fn [edge] (= 2 (item-count-in crossing edge))) crossing)))
+
+(defn get-untwistable-edges [knot]
+  (let [crossings-with-three-edges (filter #(= 3 (count (set %))) knot)]
+    (extract-edge-with-count-2 crossings-with-three-edges)))
+
+(defn get-untwistable-edges- [knot]
+  (let [crossings-with-three-edges (filter #(= 3 (count (set %))) knot)]
+    (map (fn [crossing]
+           (apply max-key #(item-count-in crossing %) crossing))
+         crossings-with-three-edges)
+    ))

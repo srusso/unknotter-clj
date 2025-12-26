@@ -1,5 +1,6 @@
 (ns unknotter.knot-manipulation
-  (:require [unknotter.vectors :refer [has index-of indexes-of]]))
+  (:require [unknotter.vectors :refer [has index-of indexes-of]]
+            [unknotter.knot :refer [edge-count]]))
 
 (defn- walk-along-knot
   "Walks along the knot by the specified amount of steps, starting from the specified edge.
@@ -11,10 +12,9 @@
       ^--------<----------<-----------<
    Example: if you start from edge 2 and walk three steps, you end up at 5."
   [knot starting-edge steps]
-  (let [knot-edge-count (* 2 (count knot))]
-    (+
-      (mod (+ starting-edge (- steps 1)) knot-edge-count)
-      1)))
+  (+
+    (mod (+ starting-edge (- steps 1)) (edge-count knot))
+    1))
 
 (defn next-edge
   "Gets the edge after the given edge, following the knot's orientation.
