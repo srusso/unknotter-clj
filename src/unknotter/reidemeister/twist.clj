@@ -28,11 +28,13 @@
       )
     knot))
 
+(defn- first-or-last-edge? [knot edge]
+  (or (= edge 1) (= edge (* 2 (count knot)))))
+
 (defn- do-twist [knot edge create-crossing]
-  (let [last-edge (* 2 (count knot))]
-    (if (or (= edge 1) (= edge last-edge))
-      (do-twist (shifted knot 1) (next-edge knot edge) create-crossing)
-      (conj (prepare-twist knot edge) (create-crossing edge)))))
+  (if (first-or-last-edge? knot edge)
+    (do-twist (shifted knot 1) (next-edge knot edge) create-crossing)
+    (conj (prepare-twist knot edge) (create-crossing edge))))
 
 (defn left-positive-twist [knot edge-to-twist]
   (if
@@ -78,8 +80,23 @@
               edge-to-twist
               (fn [edge] [edge (+ edge 1) (+ edge 1) (+ edge 2)]))))
 
-(defn untwist [knot edge]
-  (throw (UnsupportedOperationException. "Implement me.")))
+(defn untwist
+  "Remove the twist adjacent to the given edge."
+  [knot edge]
+  (if (first-or-last-edge? knot edge)
+    (untwist (shifted knot 1) (next-edge knot edge))
+
+    ; remove the crossing where the edge appears twice
+    (let [filtered-crossings (filter #(not (= 2 (item-count-in % edge))) knot)]
+      ; TODO: if no such crossing is found, or if the edge is found in a crossing but appears there only once, throw error
+      (mapv
+        (fn [crossing]
+          (mapv
+            (fn [e]
+              ; shift all edges after the removed edge by -2
+              (if (> e edge) (- e 2) e))
+            crossing))
+        filtered-crossings))))
 
 (def get-twistable-edges get-all-edges)
 
