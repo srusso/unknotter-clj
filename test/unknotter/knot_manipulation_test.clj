@@ -75,6 +75,11 @@
     (is (= (get-forth-index knot72 12) [5, 0]))
     (is (= (get-forth-index knot72 13) [1, 3]))))
 
+(deftest test-get-forth-index-twisted-edge
+  (testing
+    (is (= (get-forth-index [[24 4 25 3] [4 30 5 29] [5 23 6 22] [7 18 8 19] [9 27 10 26] [10 1 11 2] [2 11 3 12] [15 6 16 7] [32 17 1 18] [19 14 20 15] [30 24 31 23] [25 13 26 12] [27 9 28 8] [28 13 29 14] [16 31 17 32] [20 22 21 21]] 21)
+           [15, 2]))))
+
 (deftest test-get-adjacent-faces
   (testing
     (is (= (get-adjacent-faces trefoil 1) [[1, -4], [1, 5, 3]]))
@@ -97,3 +102,8 @@
     (is (= (get-adjacent-faces knot72 11) [[11, 7], [11, -6, 13, -4, 1, -8]]))
     (is (= (get-adjacent-faces knot72 12) [[12, -5, 14, -3, 10, -7], [12, 6]]))
     (is (= (get-adjacent-faces knot72 13) [[13, 5], [13, -4, 1, -8, 11, -6]]))))
+
+(deftest test-get-adjacent-faces-of-twisted-edge
+  (testing
+    (is (= (get-adjacent-faces [[24 4 25 3] [4 30 5 29] [5 23 6 22] [7 18 8 19] [9 27 10 26] [10 1 11 2] [2 11 3 12] [15 6 16 7] [32 17 1 18] [19 14 20 15] [30 24 31 23] [25 13 26 12] [27 9 28 8] [28 13 29 14] [16 31 17 32] [20 22 21 21]] 21)
+           [[21], [21, -20, 15, -6, -22]]))))
