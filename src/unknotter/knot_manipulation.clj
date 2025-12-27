@@ -57,9 +57,10 @@
   "Get the index of the given edge in the crossing it faces toward."
   [knot edge]
   (let [[[idx1 crossing1] [idx2 crossing2]] (find-crossings-with-edge knot edge)
-        edge-idx-in-crossing-1 (index-of crossing1 edge)]
-    (if (index-is-facing knot idx1 edge-idx-in-crossing-1)
-      [idx1 edge-idx-in-crossing-1]
+        edge-idxs-in-crossing-1 (indexes-of crossing1 edge)
+        edge1-idx-facing (first (filter #(index-is-facing knot idx1 %) edge-idxs-in-crossing-1))]
+    (if (not (nil? edge1-idx-facing))
+      [idx1 edge1-idx-facing]
       [idx2 (index-of crossing2 edge)])))
 
 (defn- get-adjacent-face

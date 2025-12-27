@@ -78,7 +78,7 @@
 (deftest test-get-forth-index-twisted-edge
   (testing
     (is (= (get-forth-index [[24 4 25 3] [4 30 5 29] [5 23 6 22] [7 18 8 19] [9 27 10 26] [10 1 11 2] [2 11 3 12] [15 6 16 7] [32 17 1 18] [19 14 20 15] [30 24 31 23] [25 13 26 12] [27 9 28 8] [28 13 29 14] [16 31 17 32] [20 22 21 21]] 21)
-           [15, 2]))))
+           [15, 3]))))
 
 (deftest test-get-adjacent-faces
   (testing
