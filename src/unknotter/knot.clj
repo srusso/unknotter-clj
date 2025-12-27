@@ -59,8 +59,10 @@
         crossing))
     knot))
 
+(def knot-format-validator (m/validator knot-diagram-schema))
+
 (defn validate-knot-format [knot]
-  (let [valid? (m/validate knot-diagram-schema knot)]
+  (let [valid? (knot-format-validator knot)]
     (when (not valid?)
       (throw (IllegalArgumentException. (str "Not a valid knot representation: " knot))))
     knot))
