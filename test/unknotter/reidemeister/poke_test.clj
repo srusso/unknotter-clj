@@ -1,8 +1,8 @@
 (ns unknotter.reidemeister.poke-test
   (:require [clojure.test :refer [deftest is testing]]
-            [unknotter.resource-loader :refer [load-knot-diagram]]
-            [unknotter.knot :refer [knot= infinity-unknot-1 infinity-unknot-2]]
-            [unknotter.reidemeister.poke :refer [poke prepare-poke]]))
+            [unknotter.knot :refer [infinity-unknot-1 infinity-unknot-2 knot=]]
+            [unknotter.reidemeister.poke :refer [poke prepare-poke unpoke]]
+            [unknotter.resource-loader :refer [load-knot-diagram]]))
 
 (def trefoil (load-knot-diagram :3_1))
 (def expected-poked-trefoil [[2 7 3 8] [3 9 4 8] [4 9 5 10] [6 1 7 2] [10 5 1 6]])
@@ -42,3 +42,7 @@
 (deftest test-illegal-poke
   (testing
     (is (thrown? IllegalArgumentException (poke trefoil 3 3)))))
+
+(deftest unpoke-test
+  (testing
+    (is (knot= trefoil (unpoke (poke trefoil 3 6) 4 9)))))

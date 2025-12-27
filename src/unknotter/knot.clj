@@ -70,3 +70,6 @@
 
 (defn get-all-edges [knot]
   (range 1 (+ 1 (edge-count knot))))
+
+(defn first-or-last-edge? [knot edge]
+  (or (= edge 1) (= edge (* 2 (count knot)))))

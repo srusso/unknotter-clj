@@ -1,5 +1,5 @@
 (ns unknotter.reidemeister.twist
-  (:require [unknotter.knot :refer [is-infinity-unknot get-all-edges next-edge next-edge-in-knot prev-edge shifted]]
+  (:require [unknotter.knot :refer [first-or-last-edge? is-infinity-unknot get-all-edges next-edge next-edge-in-knot prev-edge shifted]]
             [unknotter.vectors :refer [item-count-in has]]))
 
 (defn- lies-on-twist
@@ -27,9 +27,6 @@
           crossing))
       )
     knot))
-
-(defn- first-or-last-edge? [knot edge]
-  (or (= edge 1) (= edge (* 2 (count knot)))))
 
 (defn- do-twist [knot edge create-crossing]
   (if (first-or-last-edge? knot edge)

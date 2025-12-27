@@ -1,5 +1,5 @@
 (ns unknotter.reidemeister.poke
-  (:require [unknotter.knot :refer [get-all-edges infinity-unknot-1 infinity-unknot-2 prev-edge]]
+  (:require [unknotter.knot :refer [first-or-last-edge? next-edge get-all-edges infinity-unknot-1 infinity-unknot-2 prev-edge shifted]]
             [unknotter.knot-manipulation :refer [get-adjacent-faces is-closed is-open]]
             [unknotter.vectors :refer [has item-count-in]]))
 
@@ -104,8 +104,28 @@
                                  [[4 2 5 1] [5 2 6 3] [6 4 1 3]])
     :else (poke-knot knot under-edge over-edge)))
 
-(defn unpoke [knot edge1 edge2]
-  (throw (UnsupportedOperationException. "Implement me.")))
+(defn unpoke
+  "Remove the poke between the two given edges."
+  [knot edge1 edge2]
+  (if (or (first-or-last-edge? knot edge1) (first-or-last-edge? knot edge2))
+    (unpoke (shifted knot 1) (next-edge knot edge1) (next-edge knot edge2))
+
+    ; Remove crossings that have both edge 1 and edge 2
+    (let [knot-without-poked-crossings (filter #(not (and (has % edge1) (has % edge2))) knot)
+          lower-edge (min edge1 edge2)
+          higher-edge (max edge1 edge2)]
+      ; TODO error checking, that exactly two crossings were deleted
+      (mapv
+        (fn [crossing]
+          (mapv
+            (fn [e]
+              ; shift all edges after the removed edge by -2
+              (cond
+                (> e higher-edge) (- e 4)
+                (< e lower-edge) e
+                :else (- e 2)))
+            crossing))
+        knot-without-poked-crossings))))
 
 (defn- get-pokable-edges-with [knot edge]
   (let [[face-ccw face-cw] (get-adjacent-faces knot edge)
@@ -126,12 +146,12 @@
 
 (defn- get-unpokable-edge-pairs- [knot]
   (let [unpokable-edge-pairs (->> (get-all-edges knot)
-                                 (map #(get-adjacent-faces knot %))
-                                 ; flatten the faces
-                                 (apply concat)
-                                 (filter (fn [face] (= 2 (count face))))
-                                 (filter (fn [[edge1 edge2]] (is-unpokable knot (abs edge1) (abs edge2))))
-                                 (map (fn [[edge1 edge2]] (sort [(abs edge1) (abs edge2)]))))]
+                                  (map #(get-adjacent-faces knot %))
+                                  ; flatten the faces
+                                  (apply concat)
+                                  (filter (fn [face] (= 2 (count face))))
+                                  (filter (fn [[edge1 edge2]] (is-unpokable knot (abs edge1) (abs edge2))))
+                                  (map (fn [[edge1 edge2]] (sort [(abs edge1) (abs edge2)]))))]
     (reduce (fn [deduped-pairs [edge1 edge2]]
               (let [flattened-pairs (flatten deduped-pairs)]
                 (if (or
