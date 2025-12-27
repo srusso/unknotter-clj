@@ -1,6 +1,6 @@
 (ns unknotter.reidemeister.twist
-  (:require [unknotter.knot :refer [first-or-last-edge? is-infinity-unknot get-all-edges next-edge next-edge-in-knot prev-edge shifted]]
-            [unknotter.vectors :refer [item-count-in has]]))
+  (:require [unknotter.knot :refer [first-or-last-edge? get-all-edges is-infinity-unknot next-edge next-edge-in-knot prev-edge shifted validate-knot-format]]
+            [unknotter.vectors :refer [has item-count-in]]))
 
 (defn- lies-on-twist
   "Return true if the edge lies on a twist, i.e. the crossing has only two edges."
@@ -29,9 +29,10 @@
     knot))
 
 (defn- do-twist [knot edge create-crossing]
-  (if (first-or-last-edge? knot edge)
-    (do-twist (shifted knot 1) (next-edge knot edge) create-crossing)
-    (conj (prepare-twist knot edge) (create-crossing edge))))
+  (validate-knot-format
+    (if (first-or-last-edge? knot edge)
+      (do-twist (shifted knot 1) (next-edge knot edge) create-crossing)
+      (conj (prepare-twist knot edge) (create-crossing edge)))))
 
 (defn left-positive-twist [knot edge-to-twist]
   (if
@@ -77,11 +78,11 @@
               edge-to-twist
               (fn [edge] [edge (+ edge 1) (+ edge 1) (+ edge 2)]))))
 
-(defn untwist
+(defn do-untwist
   "Remove the twist adjacent to the given edge."
   [knot edge]
   (if (first-or-last-edge? knot edge)
-    (untwist (shifted knot 1) (next-edge knot edge))
+    (do-untwist (shifted knot 1) (next-edge knot edge))
 
     ; remove the crossing where the edge appears twice
     (let [filtered-crossings (filter #(not (= 2 (item-count-in % edge))) knot)]
@@ -95,6 +96,10 @@
             crossing))
         filtered-crossings))))
 
+(defn untwist [knot edge]
+  (->> (do-untwist knot edge)
+       (validate-knot-format)))
+
 (def get-twistable-edges get-all-edges)
 
 (defn- extract-edge-with-count-2 [crossing]
@@ -102,7 +107,7 @@
 
 (defn get-untwistable-edges [knot]
   (let [crossings-with-three-edges (filter #(= 3 (count (set %))) knot)]
-    (extract-edge-with-count-2 crossings-with-three-edges)))
+    (mapv identity (extract-edge-with-count-2 crossings-with-three-edges))))
 
 (defn get-untwistable-edges- [knot]
   (let [crossings-with-three-edges (filter #(= 3 (count (set %))) knot)]

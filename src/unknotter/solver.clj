@@ -23,31 +23,29 @@
                  (get-slidable-faces knot)]
         chosen-move (.nextInt randomgen 0 5)
         actual-moves (mapv (fn [i] (mod (+ i chosen-move) 5)) (range 0 5))
-        actual-move (first (filter #(not (nil? %)) (map (fn [i] (get options i)) actual-moves)))]
+        actual-move (first (filter #(not (empty? (get options %))) actual-moves))]
     (cond
           (= 0 actual-move)
           (let [twistable-edges (get options 0)
-                edge (get knot (.nextInt randomgen 0 (count twistable-edges)))
-                actual-twist (.nextInt randomgen 0 (count all-twists))]
+                edge (get twistable-edges (.nextInt randomgen 0 (count twistable-edges)))
+                actual-twist (get all-twists (.nextInt randomgen 0 (count all-twists)))]
             (actual-twist knot edge))
           (= 1 actual-move)
           (let [untwistable-edges (get options 1)
-                edge (get knot (.nextInt randomgen 0 (count untwistable-edges)))]
+                edge (get untwistable-edges (.nextInt randomgen 0 (count untwistable-edges)))]
             (untwist knot edge))
           (= 2 actual-move)
           (let [pokable-edge-pairs (get options 2)
-                [edge1 edge2] (get knot (.nextInt randomgen 0 (count pokable-edge-pairs)))]
+                [edge1 edge2] (get pokable-edge-pairs (.nextInt randomgen 0 (count pokable-edge-pairs)))]
             (poke knot edge1 edge2))
           (= 3 actual-move)
           (let [unpokable-edge-pairs (get options 3)
-                [edge1 edge2] (get knot (.nextInt randomgen 0 (count unpokable-edge-pairs)))]
+                [edge1 edge2] (get unpokable-edge-pairs (.nextInt randomgen 0 (count unpokable-edge-pairs)))]
             (unpoke knot edge1 edge2))
           (= 4 actual-move)
           (let [slidable-faces (get options 4)
-                [edge1 edge2 edge3] (get knot (.nextInt randomgen 0 (count slidable-faces)))]
-            (slide knot edge1 edge2 edge3))
-          )
-    ))
+                [edge1 edge2 edge3] (get slidable-faces (.nextInt randomgen 0 (count slidable-faces)))]
+            (slide knot edge1 edge2 edge3)))))
 
 (defn is-unknot?
   "Returns true if the algorithm manages to find a sequence of reidemeister moves

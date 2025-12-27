@@ -1,7 +1,7 @@
 (ns unknotter.reidemeister.slide
   (:require [unknotter.knot-manipulation :refer [find-friend-crossing-index get-adjacent-faces
                                                  is-closed is-half-open is-open]]
-            [unknotter.knot :refer [get-all-edges]]
+            [unknotter.knot :refer [validate-knot-format get-all-edges]]
             [unknotter.vectors :refer [count-of has overlap?]]
             [unknotter.face :refer [face=ignoring-direction]]))
 
@@ -16,19 +16,19 @@
 (defn- slide-edges-in-crossing [knot three-edged-face crossing-index crossing]
   (let [updated-edge-value (fn [crossing edge-index] (get crossing (mod (+ edge-index 2) 4)))
         crossing-involves-face-edges (overlap? crossing three-edged-face)
-        is-face-edge (fn [edge-index] (has three-edged-face (get crossing edge-index)))]
-    (map-indexed
-      (fn [edge-index edge]
-        (cond
-          (and crossing-involves-face-edges (is-face-edge edge-index))
-          (let [[fci fei] (find-friend-crossing-index knot crossing-index edge-index)]
-            (updated-edge-value (get knot fci) fei))
-          crossing-involves-face-edges
-          (updated-edge-value crossing edge-index)
-          :else edge))
-      crossing)))
+        is-face-edge (fn [edge-index] (has three-edged-face (get crossing edge-index)))
+        map-edge (fn [edge-index edge]
+                   (cond
+                     (and crossing-involves-face-edges (is-face-edge edge-index))
+                     (let [[fci fei] (find-friend-crossing-index knot crossing-index edge-index)]
+                       (updated-edge-value (get knot fci) fei))
+                     crossing-involves-face-edges
+                     (updated-edge-value crossing edge-index)
+                     :else edge))]
+    (->> (map-indexed map-edge crossing)
+         (into []))))
 
-(defn slide
+(defn- do-slide
   "Slide an edge over the face formed by the three given edges."
   [knot edge1 edge2 edge3]
   (let [three-edged-face [edge1 edge2 edge3]
@@ -36,14 +36,18 @@
 
     (when-not (or (face=ignoring-direction face-ccw three-edged-face)
                   (face=ignoring-direction face-cw three-edged-face))
-      (throw (IllegalArgumentException. (str "Can only slide three edges along the same face."))))
+      (throw (IllegalArgumentException. (str "Can only slide three edges along the same face. Faces: CCW=" face-ccw ". CW=" face-cw ". Requested: " three-edged-face))))
 
     (when-not (is-slidable knot three-edged-face)
-      (throw (IllegalArgumentException. (str "Given edges do not follow the correct pattern for a slide."))))
+      (throw (IllegalArgumentException. (str "Given edges do not follow the correct pattern for a slide. Edges: " three-edged-face))))
 
-    (map-indexed
+    (mapv identity (map-indexed
       #(slide-edges-in-crossing knot three-edged-face %1 %2)
-      knot)))
+      knot))))
+
+(defn slide [knot edge1 edge2 edge3]
+  (->> (do-slide knot edge1 edge2 edge3)
+       (validate-knot-format)))
 
 ; Practically identical to (get-unpokable-edge-pairs). Refactor?
 (defn get-slidable-faces [knot]
@@ -54,7 +58,7 @@
                                     (filter (fn [face] (= 3 (count face))))
                                     (filter (fn [[edge1 edge2 edge3]] (is-slidable knot [(abs edge1) (abs edge2) (abs edge3)])))
                                     (map (fn [[edge1 edge2 edge3]] (sort [(abs edge1) (abs edge2) (abs edge3)]))))]
-    (reduce (fn [deduped-triplets [edge1 edge2 edge3]]
+    (mapv identity (reduce (fn [deduped-triplets [edge1 edge2 edge3]]
               (let [flattened-triplets (flatten deduped-triplets)]
                 (if (or
                       (has flattened-triplets edge1)
@@ -63,4 +67,4 @@
                   deduped-triplets
                   (conj deduped-triplets [edge1 edge2 edge3]))))
             (set [])
-            slidable-edge-triplets)))
+            slidable-edge-triplets))))

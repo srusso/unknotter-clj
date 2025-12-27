@@ -1,6 +1,7 @@
 (ns unknotter.resource-loader
   "We use Planar Diagrams (PD) to represent knots. See: https://katlas.org/wiki/Planar_Diagrams"
   (:require [clojure.java.io]
+            [unknotter.knot :refer [knot-diagram-schema]]
             [malli.core :as m]))
 
 (defn- load-resource-lines
@@ -20,9 +21,6 @@
     (reduce (fn [knot-diagram-map [knot-name knot-data]]
               (assoc knot-diagram-map (keyword knot-name) knot-data))
             {})))
-
-; schema for "vector of integer vectors, the inner vectors having a size of 4"
-(def knot-diagram-schema [:vector [:repeat {:min 4, :max 4} :int]])
 
 (def parse-knot-diagram (m/parser knot-diagram-schema))
 

@@ -1,5 +1,9 @@
 (ns unknotter.knot
-  (:require [unknotter.vectors :refer [equal-as-set]]))
+  (:require [unknotter.vectors :refer [equal-as-set]]
+            [malli.core :as m]))
+
+; schema for "vector of integer vectors, the inner vectors having a size of 4"
+(def knot-diagram-schema [:vector [:vector {:min 4, :max 4} :int]])
 
 (def infinity-unknot-1 [[1 2 2 1]])
 (def infinity-unknot-2 [[1 1 2 2]])
@@ -55,6 +59,12 @@
         crossing))
     knot))
 
+(defn validate-knot-format [knot]
+  (let [valid? (m/validate knot-diagram-schema knot)]
+    (when (not valid?)
+      (throw (IllegalArgumentException. (str "Not a valid knot representation: " knot))))
+    knot))
+
 (defn knot= [knot1 knot2]
   (or
     (= knot1 knot2)
@@ -69,7 +79,7 @@
   (throw (UnsupportedOperationException. "Implement me.")))
 
 (defn get-all-edges [knot]
-  (range 1 (+ 1 (edge-count knot))))
+  (mapv identity (range 1 (+ 1 (edge-count knot)))))
 
 (defn first-or-last-edge? [knot edge]
   (or (= edge 1) (= edge (* 2 (count knot)))))

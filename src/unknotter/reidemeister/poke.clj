@@ -1,5 +1,5 @@
 (ns unknotter.reidemeister.poke
-  (:require [unknotter.knot :refer [first-or-last-edge? next-edge get-all-edges infinity-unknot-1 infinity-unknot-2 prev-edge shifted]]
+  (:require [unknotter.knot :refer [first-or-last-edge? get-all-edges infinity-unknot-1 infinity-unknot-2 next-edge prev-edge shifted validate-knot-format]]
             [unknotter.knot-manipulation :refer [get-adjacent-faces is-closed is-open]]
             [unknotter.vectors :refer [has item-count-in]]))
 
@@ -88,9 +88,9 @@
             [[(+ higher-edge 2), (+ lower-edge 2), (+ higher-edge 3), (+ lower-edge 1)]
              [(+ higher-edge 3), lower-edge, (+ higher-edge 4), (+ lower-edge 1)]])
           :else (throw (IllegalArgumentException. "Can only poke edges along the same face.")))]
-    (concat poked-knot new-crossings)))
+    (into [] (concat poked-knot new-crossings))))
 
-(defn poke
+(defn- do-poke
   "Executes a poke on the specified knot edges."
   [knot under-edge over-edge]
   (when (= under-edge over-edge)
@@ -104,11 +104,15 @@
                                  [[4 2 5 1] [5 2 6 3] [6 4 1 3]])
     :else (poke-knot knot under-edge over-edge)))
 
-(defn unpoke
+(defn poke [knot under-edge over-edge]
+  (->> (do-poke knot under-edge over-edge)
+       (validate-knot-format)))
+
+(defn- do-unpoke
   "Remove the poke between the two given edges."
   [knot edge1 edge2]
   (if (or (first-or-last-edge? knot edge1) (first-or-last-edge? knot edge2))
-    (unpoke (shifted knot 1) (next-edge knot edge1) (next-edge knot edge2))
+    (do-unpoke (shifted knot 1) (next-edge knot edge1) (next-edge knot edge2))
 
     ; Remove crossings that have both edge 1 and edge 2
     (let [knot-without-poked-crossings (filter #(not (and (has % edge1) (has % edge2))) knot)
@@ -127,13 +131,20 @@
             crossing))
         knot-without-poked-crossings))))
 
+(defn unpoke
+  "Remove the poke between the two given edges."
+  [knot edge1 edge2]
+  (->> (do-unpoke knot edge1 edge2)
+       (validate-knot-format)))
+
 (defn- get-pokable-edges-with [knot edge]
   (let [[face-ccw face-cw] (get-adjacent-faces knot edge)
         pokable-with (->> (concat face-ccw face-cw)
                           (map abs)
                           (filter #(not= edge %))
-                          set)]
-    (map (fn [e] [edge e]) pokable-with)))
+                          set)
+        result (mapv (fn [e] [edge e]) pokable-with)]
+    result))
 
 (defn- is-unpokable [knot edge1 edge2]
   (or
@@ -142,7 +153,8 @@
 
 (defn get-pokable-edge-pairs [knot]
   (->> (get-all-edges knot)
-       (map (fn [edge] (get-pokable-edges-with knot edge)))))
+       (reduce (fn [acc edge] (concat acc (get-pokable-edges-with knot edge))) [])
+       (into [])))
 
 (defn- get-unpokable-edge-pairs- [knot]
   (let [unpokable-edge-pairs (->> (get-all-edges knot)
@@ -166,4 +178,4 @@
 (defn get-unpokable-edge-pairs [knot]
   (if (<= (count knot) 2)
     []
-    (get-unpokable-edge-pairs- knot)))
+    (mapv identity (get-unpokable-edge-pairs- knot))))

@@ -1,8 +1,9 @@
 (ns unknotter.reidemeister.slide-test
   (:require [clojure.test :refer [deftest is testing]]
             [unknotter.resource-loader :refer [load-knot-diagram]]
-            [unknotter.knot :refer [knot=]]
-            [unknotter.reidemeister.slide :refer [slide]]))
+            [unknotter.vectors :refer [equal-as-set]]
+            [unknotter.knot :refer [knot= thistlethwaite-unknot]]
+            [unknotter.reidemeister.slide :refer [slide get-slidable-faces]]))
 
 (def trefoil (load-knot-diagram :3_1))
 
@@ -27,3 +28,7 @@
 (deftest test-slide-error-2
   (testing "Given edges do not follow the correct pattern for a slide."
     (is (thrown? IllegalArgumentException (slide trefoil 2 4 6)))))
+
+(deftest test-get-slidables
+  (testing
+    (is (equal-as-set [[2 11 23] [4 13 27] [5 14 20]] (get-slidable-faces thistlethwaite-unknot)))))
