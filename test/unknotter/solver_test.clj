@@ -7,7 +7,7 @@
             [unknotter.solver :refer [is-literally-unknot]]))
 
 
-; Moves to untwist the
+; Known moves to untangle the thistlethwaite unknot
 (def moves
   [
    #(slide % 4 13 27)
