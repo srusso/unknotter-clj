@@ -103,14 +103,14 @@
 (def get-twistable-edges get-all-edges)
 
 (defn- extract-edge-with-count-2 [crossing]
-  (flatten (filter (fn [edge] (= 2 (item-count-in crossing edge))) crossing)))
-
-(defn get-untwistable-edges- [knot]
-  (let [crossings-with-three-edges (filter #(= 3 (count (set %))) knot)]
-    (mapv identity (extract-edge-with-count-2 crossings-with-three-edges))))
+  (first
+    (flatten
+      (filter
+        (fn [edge]
+          (= 2
+             (item-count-in crossing edge)))
+        crossing))))
 
 (defn get-untwistable-edges [knot]
   (let [crossings-with-three-edges (filter #(= 3 (count (set %))) knot)]
-    (mapv (fn [crossing]
-           (apply max-key #(item-count-in crossing %) crossing))
-         crossings-with-three-edges)))
+    (mapv #(extract-edge-with-count-2 %) crossings-with-three-edges)))

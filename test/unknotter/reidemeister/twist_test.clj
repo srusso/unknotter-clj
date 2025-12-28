@@ -5,7 +5,8 @@
                                                   left-positive-twist
                                                   right-negative-twist
                                                   right-positive-twist
-                                                  untwist]]
+                                                  untwist
+                                                  get-untwistable-edges]]
             [unknotter.resource-loader :refer [load-knot-diagram]]))
 
 (def trefoil (load-knot-diagram :3_1))
@@ -73,6 +74,11 @@
     (is (knot= (right-negative-twist trefoil 6) [[6 1 7 2] [8 5 1 6] [4 7 5 8] [2 3 3 4]]))
 
     (is (knot= (right-negative-twist (load-knot-diagram :4_1) 1) [[4 9 5 10] [6 2 7 1] [8 5 9 6] [10 8 1 7] [2 3 3 4]]))))
+
+(deftest test-untwistable
+  (is (=
+        [6]
+        (get-untwistable-edges [[26 4 27 3] [9 1 10 32] [8 26 9 25] [12 23 13 24] [13 29 14 28] [15 4 16 5] [7 16 8 17] [18 11 19 12] [2 21 3 22] [24 17 25 18] [29 23 30 22] [27 15 28 14] [31 11 32 10] [30 19 31 20] [20 1 21 2] [6 6 7 5]]))))
 
 (deftest twist-and-untwist
   (testing
