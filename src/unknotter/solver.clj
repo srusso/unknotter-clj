@@ -69,4 +69,6 @@
         (some is-literally-unknot knots)))))
 
 (defn -main []
-  (println (is-unknot? thistlethwaite-unknot)))
+  (println (if (is-unknot? thistlethwaite-unknot)
+             (str "This is the unknot: " thistlethwaite-unknot)
+             (str "This is (most likely) NOT the unknot: " thistlethwaite-unknot))))
