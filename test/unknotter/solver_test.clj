@@ -1,9 +1,9 @@
 (ns unknotter.solver-test
   (:require [clojure.test :refer [deftest is testing]]
             [unknotter.knot :refer [thistlethwaite-unknot]]
-            [unknotter.reidemeister.poke :refer [poke unpoke get-pokable-edge-pairs get-unpokable-edge-pairs]]
-            [unknotter.reidemeister.slide :refer [slide get-slidable-faces]]
-            [unknotter.reidemeister.twist :refer [untwist right-negative-twist right-positive-twist left-negative-twist left-positive-twist get-twistable-edges get-untwistable-edges]]
+            [unknotter.reidemeister.poke :refer [unpoke]]
+            [unknotter.reidemeister.slide :refer [slide]]
+            [unknotter.reidemeister.twist :refer [left-positive-twist right-positive-twist untwist]]
             [unknotter.solver :refer [is-literally-unknot]]))
 
 
